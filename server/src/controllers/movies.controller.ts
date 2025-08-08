@@ -30,11 +30,12 @@ export async function getMoviesController(req: Request, res: Response): Promise<
             year: movie.Year,
             runtime: movie.Runtime,
             genre: movie.Genre,
+            poster: movie.Poster,
             director: movie.Director,
             external_id: movie.imdbID,
             is_favorite: false
         }));
-        
+
         res.status(200).json(movies);
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -42,5 +43,33 @@ export async function getMoviesController(req: Request, res: Response): Promise<
             error: 'Internal server error',
             details: error instanceof Error ? error.message : 'Unknown error'
         });
+    }
+}
+
+export async function addMovieToFavoritesController(req: Request, res: Response) {
+    try {
+        const { title, year, runtime, genre, director, external_id } = req.body;
+
+        if (!title || !external_id) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Create a new movie object
+        const newMovie: Movie = {
+            id: Math.floor(Math.random() * 1000), // Mock ID, replace with actual logic to generate unique IDs
+            user_id: 0, // Will be set when user saves the movie
+            title,
+            year,   
+            runtime,
+            genre,
+            director,
+            external_id,    
+            is_favorite: true // Assuming this is a favorite movie
+        };
+
+        res.status(201).json(newMovie);
+    } catch (err) {
+        console.error('Error saving movie:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }

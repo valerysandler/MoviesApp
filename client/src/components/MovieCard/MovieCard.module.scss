@@ -1,0 +1,30 @@
+.movieCard {
+  background-color: #141414;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+  text-align: center;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+.moviePoster {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.movieTitle {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.movieDetails,
+.movieDirector {
+  font-size: 0.85rem;
+  color: #bbb;
+}

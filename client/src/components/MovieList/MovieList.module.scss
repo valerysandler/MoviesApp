@@ -1,0 +1,8 @@
+.moviesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 🧠 было 180px */
+  gap: 1.5rem;
+  margin-top: 2rem;
+  width: 100%; /* 💡 добавь */
+  max-width: 1200px; /* 💡 или 1400px — можно экспериментировать */
+}

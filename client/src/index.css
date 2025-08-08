@@ -1,0 +1,80 @@
+:root {
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.4;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #e5e5e5;
+  background-color: #141414;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #e50914; /* Netflix red */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: #f40612;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0 0 1rem 0;
+  color: #fff;
+}
+
+button {
+  border-radius: 6px;
+  border: none;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 600;
+  font-family: inherit;
+  background-color: #e50914; /* Netflix red */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 8px rgb(229 9 20 / 0.6);
+}
+button:hover {
+  background-color: #f40612;
+}
+button:focus,
+button:focus-visible {
+  outline: 3px solid #f40612;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #141414;
+    background-color: #fff;
+  }
+  a {
+    color: #e50914;
+  }
+  a:hover {
+    color: #f40612;
+  }
+  button {
+    background-color: #e50914;
+    color: white;
+    box-shadow: none;
+  }
+  button:hover {
+    background-color: #f40612;
+  }
+}

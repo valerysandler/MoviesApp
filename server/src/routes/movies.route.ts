@@ -1,13 +1,12 @@
 import express from 'express';
 import { getMoviesController } from '../controllers/movies.controller';
+import { addMovieToFavoritesController } from '../controllers/movies.controller'; // Assuming this function exists
 
 const router = express.Router();
 
 // Get movies from https://www.omdbapi.com/
-// Option 1: Query parameter: /api/movies/search?title=moviename
 router.get('/search', getMoviesController);
+router.post('/movies', addMovieToFavoritesController);
 
-// Option 2: Path parameter: /api/movies/search/batman
-// router.get('/search/:title', getMoviesController);
 
 export default router;

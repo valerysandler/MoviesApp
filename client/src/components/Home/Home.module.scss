@@ -1,0 +1,23 @@
+/* Home.module.scss */
+.container {
+  background-color: #141414;
+  min-height: 100vh;
+  padding: 20px 40px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.moviesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  overflow-x: hidden;
+  width: 100%;
+}
