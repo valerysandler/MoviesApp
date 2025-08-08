@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import { pool } from './src/database/database'; // Adjust the import path as necessary
 import userRoute from './src/routes/user.route'; // Import user routes
+import moviesRoute from './src/routes/movies.route'; // Import movies routes
 
 
 // Initialize the database connection
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Import routes
 app.use('/api/users', userRoute); // Use user routes
+app.use('/api/movies', moviesRoute); // Use movies routes
 
 
 app.get('/', (_req, res) => {
