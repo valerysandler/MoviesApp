@@ -11,7 +11,7 @@ const MovieList: React.FC<Props> = ({ movies }) => {
   return (
     <div className={styles.moviesGrid}>
       {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
+        <MovieCard key={movie.id} movie={movie} onToggleFavorite={() => {}} username='' />
       ))}
     </div>
   );
