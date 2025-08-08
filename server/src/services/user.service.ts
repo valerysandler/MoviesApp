@@ -11,7 +11,7 @@ export async function findUserByUsername(username: string): Promise<User | null>
         console.error('Query error:', error);
         throw error;
     }
-} 
+}
 
 
 
@@ -20,10 +20,25 @@ export async function createUser(username: string): Promise<User> {
     return res.rows[0];
 }
 
-export async function findOrCreateUser(username: string): Promise<User> {
+export async function findOrCreateUser(username: string): Promise<{ user: User; isNew: boolean }> {
     let user = await findUserByUsername(username);
+    let isNew = false;
+
     if (!user) {
         user = await createUser(username);
+        isNew = true;
     }
-    return user;
+
+    return { user, isNew };
+}
+
+// Get user ID by username (for internal use)
+export async function getUserIdByUsername(username: string): Promise<number> {
+    const user = await findUserByUsername(username);
+    if (!user) {
+        // If user doesn't exist, create them
+        const newUser = await createUser(username);
+        return newUser.id;
+    }
+    return user.id;
 }

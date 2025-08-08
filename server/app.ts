@@ -6,6 +6,7 @@ import path from 'path';
 import { initializeDatabase, testConnection } from './src/database/database'; // Updated import
 import userRoute from './src/routes/user.route'; // Import user routes
 import moviesRoute from './src/routes/movies.route'; // Import movies routes
+import favoritesRoute from './src/routes/favorites.route'; // Import favorites routes
 
 // Initialize the Express application
 const app = express();
@@ -19,6 +20,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Import routes
 app.use('/api/users', userRoute); // Use user routes
+app.use('/api/movies/favorites', favoritesRoute); // Use favorites routes (должен быть перед /api/movies)
 app.use('/api/movies', moviesRoute); // Use movies routes
 
 app.get('/', (_req, res) => {

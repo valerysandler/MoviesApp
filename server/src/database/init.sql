@@ -22,11 +22,23 @@ CREATE TABLE IF NOT EXISTS movies (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create favorites table for proper many-to-many relationship
+CREATE TABLE IF NOT EXISTS favorites (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, movie_id) -- Prevent duplicate favorites
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_movies_user_id ON movies(user_id);
 CREATE INDEX IF NOT EXISTS idx_movies_external_id ON movies(external_id);
 CREATE INDEX IF NOT EXISTS idx_movies_title ON movies(title);
 CREATE INDEX IF NOT EXISTS idx_movies_is_favorite ON movies(is_favorite);
+CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_movie_id ON favorites(movie_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_user_movie ON favorites(user_id, movie_id);
 
 -- Insert a default user for testing
 INSERT INTO users (username) VALUES ('testuser') ON CONFLICT (username) DO NOTHING;

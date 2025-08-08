@@ -10,8 +10,11 @@ export async function createUserController(req: Request, res: Response): Promise
         return;
     }
     try {
-        const user = await findOrCreateUser(username);
-        res.status(201).json(user);
+        const { user, isNew } = await findOrCreateUser(username);
+        res.status(201).json({
+            ...user,
+            message: isNew ? 'User created successfully' : 'User already exists'
+        });
     } catch (error: any) {
         console.error('Error creating user:', error);
         res.status(500).json({ error: error.message });
