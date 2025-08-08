@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./AddMovieModal.module.scss";
 import type { Movie } from "../../models/MovieModel";
@@ -6,25 +6,51 @@ import type { Movie } from "../../models/MovieModel";
 type AddMovieModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Movie) => void;
+  onSubmit: (data: Movie, posterFile?: File) => void;
   existingTitles: string[];
 };
 
 const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit, existingTitles }) => {
+  const [posterFile, setPosterFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<Movie>();
+  } = useForm<Omit<Movie, 'poster'>>();
 
-  const handleFormSubmit = (data: Movie) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPosterFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  const handleFormSubmit = (data: Omit<Movie, 'poster'>) => {
     if (existingTitles.includes(data.title.trim().toLowerCase())) {
       alert("A movie with the same name already exists.");
       return;
     }
-    onSubmit(data);
+    
+    if (!posterFile) {
+      alert("Please select a poster image.");
+      return;
+    }
+
+    // Создаем объект Movie с временным poster URL (будет заменен на сервере)
+    const movieData: Movie = {
+      ...data,
+      poster: '', // Будет заполнено на сервере
+    };
+
+    onSubmit(movieData, posterFile);
     reset();
+    setPosterFile(null);
+    setPreviewUrl(null);
     onClose();
   };
 
@@ -60,12 +86,26 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
             {...register("runtime", { required: true })}
           />
           {errors.runtime && <p className={styles.error}>Runtime is required</p>}
-          <input
-            type="text"
-            placeholder="Poster URL"
-            {...register("poster", { required: true })}
-          />
-          {errors.poster && <p className={styles.error}>Poster URL is required</p>}
+          
+          <div className={styles.fileInputWrapper}>
+            <label htmlFor="posterFile" className={styles.fileLabel}>
+              Choose Poster Image
+            </label>
+            <input
+              id="posterFile"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+            />
+            {!posterFile && <p className={styles.error}>Poster image is required</p>}
+            {previewUrl && (
+              <div className={styles.previewWrapper}>
+                <img src={previewUrl} alt="Poster preview" className={styles.previewImage} />
+              </div>
+            )}
+          </div>
+          
           <input
             type="text"
             placeholder="Director"

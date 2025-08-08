@@ -6,22 +6,21 @@ import {
     updateMovieFavoriteController,
     deleteMovieController
 } from '../controllers/movies.controller';
+import { upload } from '../middleware/upload';
+
 
 const router = express.Router();
 
 // Get movies from https://www.omdbapi.com/
 router.get('/search', searchMoviesController);
-
 // Get movies from database
 router.get('/', getMoviesController);
-
 // Add movie to database
-router.post('/', addMovieController);
-
+router.post('/', upload.single('poster'), addMovieController);
 // Update movie favorite status
 router.patch('/:id/favorite', updateMovieFavoriteController);
-
 // Delete movie from database
 router.delete('/:id', deleteMovieController);
+
 
 export default router;

@@ -5,6 +5,7 @@ export interface Movie {
   year?: string;
   runtime?: string;
   poster?: string;
+  poster_local?: string; // Local path for the poster image
   genre?: string;
   director?: string;
   external_id?: string;

@@ -1,14 +1,16 @@
 import styles from './Home.module.scss';
 import SearchBar from '../SearchBar/SearchBar';
 import { useEffect, useState } from 'react';
-import { searchMovies, fetchMovies } from '../../services/MovieService';
+import { searchMovies, fetchMovies, addMovieWithImage } from '../../services/MovieService';
 import type { Movie } from '../../models/MovieModel';
 import MovieList from '../MovieList/MovieList';
 import AddMovieModal from "../AddMovieModal/AddMovieModal";
 
 
 const Home = () => {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [databaseMovies, setDatabaseMovies] = useState<Movie[]>([]);
+  const [searchResults, setSearchResults] = useState<Movie[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
@@ -16,7 +18,7 @@ const Home = () => {
     const loadMovies = async () => {
       try {
         const data = await fetchMovies();
-        setMovies(data);
+        setDatabaseMovies(data);
       } catch (error) {
         console.error('Error fetching movies:', error);
       }
@@ -32,28 +34,53 @@ const Home = () => {
   const handleOpenAddModal = () => setAddModalOpen(true);
   const handleCloseAddModal = () => setAddModalOpen(false);
 
+  const currentMovies = isSearching ? searchResults : databaseMovies;
   const filteredMovies = showOnlyFavorites
-    ? movies.filter((movie) => movie.is_favorite)
-    : movies;
+    ? currentMovies.filter((movie: Movie) => movie.is_favorite)
+    : currentMovies;
 
   const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
+
     try {
       const data = await searchMovies(query);
-      console.log(data)
-      setMovies(data);
+      console.log(data);
+      setSearchResults(data);
+      setIsSearching(true);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleAddMovie = (newMovie: Movie) => {
-    setMovies((prev) => [...prev, newMovie]);
+  const handleClearSearch = () => {
+    setIsSearching(false);
+    setSearchResults([]);
+  };
+
+  const handleAddMovie = async (newMovie: Movie, posterFile?: File) => {
+    try {
+      if (posterFile) {
+        // Используем новую функцию с загрузкой файла
+        const addedMovie = await addMovieWithImage(newMovie, posterFile);
+        setDatabaseMovies((prev: Movie[]) => [...prev, addedMovie]);
+      } else {
+        // Fallback на старую функцию (если нет файла)
+        setDatabaseMovies((prev: Movie[]) => [...prev, newMovie]);
+      }
+    } catch (error) {
+      console.error('Error adding movie:', error);
+      alert('Failed to add movie. Please try again.');
+    }
   };
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Movies</h1>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
       <div className={styles.toolbar}>
         <button
           className={`${styles.iconButton} ${showOnlyFavorites ? styles.active : ''}`}
@@ -77,18 +104,16 @@ const Home = () => {
         isOpen={isAddModalOpen}
         onClose={handleCloseAddModal}
         onSubmit={handleAddMovie}
-        existingTitles={movies.map(m => m.title.toLowerCase())}
+        existingTitles={databaseMovies.map((m: Movie) => m.title.toLowerCase())}
       />
       {filteredMovies.length === 0 ? (
         <p className={styles.noMovies}>No movies found</p>
       ) : (
         <MovieList
           movies={filteredMovies}
-          // showOnlyFavorites={showOnlyFavorites}
-          // setMovies={setMovies}
+          isFromDatabase={!isSearching}
         />
       )}
-      <MovieList movies={movies} />
 
     </div>
   );

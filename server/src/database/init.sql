@@ -30,3 +30,6 @@ CREATE INDEX IF NOT EXISTS idx_movies_is_favorite ON movies(is_favorite);
 
 -- Insert a default user for testing
 INSERT INTO users (username) VALUES ('testuser') ON CONFLICT (username) DO NOTHING;
+
+-- Add poster_local column to movies table
+ALTER TABLE movies ADD COLUMN IF NOT EXISTS poster_local VARCHAR(500);

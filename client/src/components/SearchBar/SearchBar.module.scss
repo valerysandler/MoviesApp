@@ -17,7 +17,10 @@
 
 .input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem; /* padding-left — для иконки */
+  height: 2.5rem;
+  padding: 0.75rem 2.5rem 0.75rem 3rem; /* увеличили правый padding для кнопки */
+  box-sizing: border-box;
+  padding: 0.75rem 3rem 0.75rem 2.5rem; /* увеличили правый padding для кнопки */
   font-size: 1rem;
   border: none;
   border-radius: 8px;
@@ -53,4 +56,28 @@
   font-size: 0.8rem;
   align-self: flex-start;
   padding-left: 5px;
+}
+
+.clearButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.clearButton:hover {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.1);
 }

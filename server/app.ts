@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { initializeDatabase, testConnection } from './src/database/database'; // Updated import
 import userRoute from './src/routes/user.route'; // Import user routes
 import moviesRoute from './src/routes/movies.route'; // Import movies routes
@@ -12,6 +13,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Import routes
 app.use('/api/users', userRoute); // Use user routes

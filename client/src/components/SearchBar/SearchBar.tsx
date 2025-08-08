@@ -1,26 +1,41 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './SearchBar.module.scss';
-import { FaSearch } from 'react-icons/fa'; // ← иконка
+import { FaSearch, FaTimes } from 'react-icons/fa'; // ← добавили FaTimes
 
 interface SearchBarProps {
   onSearch: (searchTerm: string) => void;
+  onClear?: () => void;
 }
 
 interface FormData {
   title: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onClear }) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>();
 
+  const watchedTitle = watch('title');
+
   const onSubmit = (data: FormData) => {
-    onSearch(data.title.trim());
+    const trimmedTitle = data.title.trim();
+    onSearch(trimmedTitle);
   };
+
+  const handleClear = () => {
+    setValue('title', '');
+    if (onClear) {
+      onClear();
+    }
+  };
+
+  const showClearButton = watchedTitle && watchedTitle.length > 0;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
@@ -35,6 +50,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           })}
           className={styles.input}
         />
+        {showClearButton && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className={styles.clearButton}
+            aria-label="Clear search"
+          >
+            <FaTimes />
+          </button>
+        )}
       </div>
       {errors.title && <span className={styles.errorMsg}>{errors.title.message}</span>}
     </form>

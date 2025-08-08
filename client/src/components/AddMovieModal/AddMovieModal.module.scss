@@ -49,3 +49,39 @@
   color: #ff7875;
   font-size: 0.9rem;
 }
+
+.fileInputWrapper {
+  margin: 0.5rem 0;
+}
+
+.fileLabel {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background-color: #444;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  border: 1px solid #555;
+}
+
+.fileLabel:hover {
+  background-color: #555;
+}
+
+.fileInput {
+  display: none;
+}
+
+.previewWrapper {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.previewImage {
+  max-width: 150px;
+  max-height: 200px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

@@ -73,14 +73,29 @@ export async function getMoviesController(req: Request, res: Response): Promise<
 export async function addMovieController(req: Request, res: Response): Promise<void> {
     try {
         const movieData: Omit<Movie, 'id'> = req.body;
+        const imageFile = req.file;
 
         // Validate required fields
         if (!movieData.title) {
             res.status(400).json({ error: 'Title is required' });
             return;
         }
+        if (!movieData.user_id) {
+            res.status(400).json({ error: 'User ID is required' });
+            return;
+        }
 
-        const newMovie = await addMovieToDatabase(movieData);
+        let posterPath: string | undefined = undefined;
+        if (imageFile) {
+            posterPath = `/uploads/posters/${imageFile.filename}`;
+        }
+
+        const newMovie = await addMovieToDatabase({
+            ...movieData,
+            poster_local: posterPath,
+            user_id: movieData.user_id || 1, // default user
+            is_favorite: movieData.is_favorite || false
+        });
         res.status(201).json(newMovie);
     } catch (error) {
         console.error('Error adding movie to database:', error);

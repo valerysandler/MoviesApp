@@ -5,11 +5,12 @@ import UsernameModal from '../UsernamModal/UsernameModal';
 import type { Movie } from '../../models/MovieModel';
 import { addToFavorites } from '../../services/MovieService';
 
-interface MovieListProps{
+interface MovieListProps {
   movies: Movie[];
+  isFromDatabase?: boolean;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+const MovieList: React.FC<MovieListProps> = ({ movies, isFromDatabase = true }) => {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -37,6 +38,7 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
             key={movie.id}
             movie={movie}
             onFavoriteClick={handleFavoriteClick}
+            isFromDatabase={isFromDatabase}
           />
         ))}
       </div>
