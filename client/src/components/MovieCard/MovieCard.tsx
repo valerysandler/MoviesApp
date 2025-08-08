@@ -1,37 +1,22 @@
 import React from 'react';
 import styles from './MovieCard.module.scss';
 import type { Movie } from '../../models/MovieModel';
-import { addToFavorites } from '../../services/MovieService';
 
-interface Props {
+interface MovieCardProps {
     movie: Movie;
-    username: string;
-    onToggleFavorite: (id: number, isFavorite: boolean) => void;
-
-
+    onFavoriteClick: (movie: Movie) => void;
 }
 
-const MovieCard: React.FC<Props> = ({ movie }) => {
-
-    const handleFavoriteClick = async () => {
-        try {
-            // вызов API для переключения избранного
-            await addToFavorites(movie);
-            onToggleFavorite(movie.id, !movie.is_favorite);
-        } catch (error) {
-            console.error('Favorite toggle failed', error);
-        }
-    };
-
+const MovieCard: React.FC<MovieCardProps> = ({ movie, onFavoriteClick }) => {
     return (
         <div className={styles.movieCard}>
-            <button
+            {/* <button
                 className={styles.favoriteButton}
-                onClick={handleFavoriteClick}
+                onClick={() => onFavoriteClick(movie)}
                 aria-label="Toggle Favorite"
             >
                 {movie.is_favorite ? '★' : '☆'}
-            </button>
+            </button> */}
             <img src={movie.poster} alt={movie.title} className={styles.moviePoster} />
             <div className={styles.movieInfo}>
                 <h2 className={styles.movieTitle}>{movie.title}</h2>
@@ -41,12 +26,9 @@ const MovieCard: React.FC<Props> = ({ movie }) => {
                 <p className={styles.movieDetails}>Directed by: {movie.director}</p>
             </div>
         </div>
-
     );
 };
 
+
 export default MovieCard;
-function onToggleFavorite(id: number, arg1: boolean) {
-    throw new Error('Function not implemented.');
-}
 

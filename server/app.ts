@@ -2,15 +2,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cors from 'cors';
-import { pool } from './src/database/database'; // Adjust the import path as necessary
+import { initializeDatabase, testConnection } from './src/database/database'; // Updated import
 import userRoute from './src/routes/user.route'; // Import user routes
 import moviesRoute from './src/routes/movies.route'; // Import movies routes
-
-
-// Initialize the database connection
-pool.connect()
-    .then(() => console.log(`Database ${process.env.DB_NAME} connected successfully`))
-    .catch(err => console.error('Database connection error:', err));
 
 // Initialize the Express application
 const app = express();
@@ -23,11 +17,27 @@ app.use(express.json());
 app.use('/api/users', userRoute); // Use user routes
 app.use('/api/movies', moviesRoute); // Use movies routes
 
-
 app.get('/', (_req, res) => {
   res.send('API is running');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Test database connection
+    await testConnection();
+
+    // Initialize database tables
+    await initializeDatabase();
+
+    // Start the server
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

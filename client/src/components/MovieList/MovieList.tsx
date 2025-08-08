@@ -1,19 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './MovieList.module.scss';
 import MovieCard from '../MovieCard/MovieCard';
+import UsernameModal from '../UsernamModal/UsernameModal';
 import type { Movie } from '../../models/MovieModel';
+import { addToFavorites } from '../../services/MovieService';
 
-interface Props {
+interface MovieListProps{
   movies: Movie[];
 }
 
-const MovieList: React.FC<Props> = ({ movies }) => {
+const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleFavoriteClick = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveUsername = async (username: string) => {
+    if (!selectedMovie) return;
+
+    try {
+      await addToFavorites(selectedMovie, username);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Error saving favorite:', err);
+    }
+  };
+
   return (
-    <div className={styles.moviesGrid}>
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} onToggleFavorite={() => {}} username='' />
-      ))}
-    </div>
+    <>
+      <div className={styles.moviesGrid}>
+        {movies.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            onFavoriteClick={handleFavoriteClick}
+          />
+        ))}
+      </div>
+
+      <UsernameModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveUsername}
+      />
+    </>
   );
 };
 

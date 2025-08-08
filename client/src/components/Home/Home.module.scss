@@ -21,3 +21,42 @@
   overflow-x: hidden;
   width: 100%;
 }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.iconButton {
+  background-color: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: #ff4d4f;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+    color: #ff7875;
+  }
+
+  &.active {
+    color: #fadb14; // жёлтая звезда
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+    border-radius: 0.3rem;
+  }
+}
+
+.noMovies {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #888;
+  margin-top: 20px;
+}

@@ -24,7 +24,7 @@ export async function getMoviesFromDatabase(): Promise<Movie[]> {
             FROM movies 
             ORDER BY created_at DESC
         `);
-
+        
         return result.rows as Movie[];
     } catch (error) {
         console.error('Error fetching movies from database:', error);
@@ -50,7 +50,7 @@ export async function addMovieToDatabase(movie: Omit<Movie, 'id'>): Promise<Movi
             movie.external_id,
             movie.is_favorite
         ]);
-
+        
         return result.rows[0] as Movie;
     } catch (error) {
         console.error('Error adding movie to database:', error);
@@ -78,11 +78,11 @@ export async function updateMovieFavoriteStatus(id: number, is_favorite: boolean
             WHERE id = $2 
             RETURNING *
         `, [is_favorite, id]);
-
+        
         if (result.rows.length === 0) {
             throw new Error('Movie not found');
         }
-
+        
         return result.rows[0] as Movie;
     } catch (error) {
         console.error('Error updating movie favorite status:', error);
@@ -112,7 +112,7 @@ export async function searchMovies(title: string) {
     if (response.data.Response === 'False') {
         throw new Error(response.data.Error);
     }
-    return response.data.Search;
+    return response.data.Search; 
 }
 
 export async function getMovieDetails(imdbID: string) {
@@ -125,5 +125,5 @@ export async function getMovieDetails(imdbID: string) {
     if (response.data.Response === 'False') {
         throw new Error(response.data.Error);
     }
-    return response.data;
+    return response.data; 
 }
