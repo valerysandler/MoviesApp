@@ -13,7 +13,7 @@ type AddMovieModalProps = {
 const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit, existingTitles }) => {
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
+
   const {
     register,
     handleSubmit,
@@ -35,7 +35,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
       alert("A movie with the same name already exists.");
       return;
     }
-    
+
     if (!posterFile) {
       alert("Please select a poster image.");
       return;
@@ -86,7 +86,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
             {...register("runtime", { required: true })}
           />
           {errors.runtime && <p className={styles.error}>Runtime is required</p>}
-          
+
           <div className={styles.fileInputWrapper}>
             <label htmlFor="posterFile" className={styles.fileLabel}>
               Choose Poster Image
@@ -105,14 +105,14 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
               </div>
             )}
           </div>
-          
+
           <input
             type="text"
             placeholder="Director"
             {...register("director", { required: true })}
           />
           {errors.director && <p className={styles.error}>Director is required</p>}
-     
+
           <button type="submit">Add</button>
           <button type="button" onClick={onClose}>Cancel</button>
         </form>
