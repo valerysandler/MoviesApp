@@ -1,0 +1,224 @@
+.container {
+  min-height: 100vh;
+  background: #141414;
+  color: white;
+  padding: 2rem;
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+}
+
+.loading {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.error h2 {
+  color: #ff4757;
+  margin-bottom: 1rem;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.movieHero {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.posterSection {
+  display: flex;
+  justify-content: center;
+}
+
+.posterLarge {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.posterLarge:hover {
+  transform: scale(1.02);
+}
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.metadata {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.year,
+.runtime,
+.genre {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.year {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #4caf50;
+}
+
+.runtime {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.4);
+  color: #2196f3;
+}
+
+.genre {
+  background: rgba(156, 39, 176, 0.2);
+  border-color: rgba(156, 39, 176, 0.4);
+  color: #9c27b0;
+}
+
+.director {
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.director strong {
+  color: white;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.favoriteButton,
+.editButton,
+.deleteButton {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.favoriteButton {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 2px solid rgba(255, 193, 7, 0.4);
+}
+
+.favoriteButton:hover {
+  background: rgba(255, 193, 7, 0.3);
+  border-color: rgba(255, 193, 7, 0.6);
+  transform: translateY(-2px);
+}
+
+.favoriteButton.isFavorite {
+  background: rgba(255, 193, 7, 0.8);
+  color: #000;
+  border-color: #ffc107;
+}
+
+.editButton {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+  border: 2px solid rgba(33, 150, 243, 0.4);
+}
+
+.editButton:hover {
+  background: rgba(33, 150, 243, 0.3);
+  border-color: rgba(33, 150, 243, 0.6);
+  transform: translateY(-2px);
+}
+
+.deleteButton {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  border: 2px solid rgba(244, 67, 54, 0.4);
+}
+
+.deleteButton:hover {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: rgba(244, 67, 54, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .movieHero {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .metadata {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+
+  .favoriteButton,
+  .editButton,
+  .deleteButton {
+    flex: 1;
+    min-width: 150px;
+    justify-content: center;
+  }
+}

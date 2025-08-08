@@ -1,33 +1,53 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './MovieList.module.scss';
 import MovieCard from '../MovieCard/MovieCard';
 import UsernameModal from '../UsernamModal/UsernameModal';
+import { useAuthAction } from '../../hooks/useAuthAction';
 import type { Movie } from '../../models/MovieModel';
-import { addToFavorites } from '../../services/MovieService';
+import { toggleFavorite } from '../../services/MovieService';
 
 interface MovieListProps {
   movies: Movie[];
   isFromDatabase?: boolean;
+  onMovieUpdated?: (updatedMovie: Movie) => void;
+  onMovieDeleted?: (movieId: number) => void;
+  onAddToDatabase?: (movie: Movie) => void;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies, isFromDatabase = true }) => {
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const MovieList: React.FC<MovieListProps> = ({
+  movies,
+  isFromDatabase = true,
+  onMovieUpdated,
+  onMovieDeleted,
+  onAddToDatabase
+}) => {
+  const {
+    executeWithAuth,
+    showModal,
+    handleUserSubmit,
+    handleModalClose,
+    user
+  } = useAuthAction();
 
-  const handleFavoriteClick = (movie: Movie) => {
-    setSelectedMovie(movie);
-    setIsModalOpen(true);
-  };
+  const handleFavoriteClick = async (movie: Movie) => {
+    executeWithAuth(async () => {
+      if (!user) return;
 
-  const handleSaveUsername = async (username: string) => {
-    if (!selectedMovie) return;
+      try {
+        // Используем новую систему избранных с user ID
+        const newFavoriteStatus = await toggleFavorite(movie.id, user.username);
+        console.log(`Movie ${newFavoriteStatus ? 'added to' : 'removed from'} favorites`);
 
-    try {
-      await addToFavorites(selectedMovie, username);
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error('Error saving favorite:', err);
-    }
+        // Обновляем локальное состояние фильма
+        if (onMovieUpdated) {
+          const updatedMovie = { ...movie, is_favorite: newFavoriteStatus };
+          onMovieUpdated(updatedMovie);
+        }
+      } catch (err) {
+        console.error('Error toggling favorite:', err);
+        alert('Failed to update favorite status. Please try again.');
+      }
+    });
   };
 
   return (
@@ -38,15 +58,18 @@ const MovieList: React.FC<MovieListProps> = ({ movies, isFromDatabase = true }) 
             key={movie.id}
             movie={movie}
             onFavoriteClick={handleFavoriteClick}
+            onMovieUpdated={onMovieUpdated}
+            onMovieDeleted={onMovieDeleted}
+            onAddToDatabase={onAddToDatabase}
             isFromDatabase={isFromDatabase}
           />
         ))}
       </div>
 
       <UsernameModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveUsername}
+        isOpen={showModal}
+        onClose={handleModalClose}
+        onSave={handleUserSubmit}
       />
     </>
   );

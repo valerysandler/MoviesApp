@@ -12,6 +12,65 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Стили для вкладок */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab.active {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #4caf50;
+  border-radius: 1px;
+}
+
+/* Пустое состояние */
+.emptyState {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+}
+
+.emptyState p {
+  font-size: 1.2rem;
+  color: #888;
+  margin: 0;
 }
 
 .moviesGrid {
@@ -27,30 +86,34 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 .iconButton {
-  background-color: transparent;
+  background: linear-gradient(135deg, #4caf50, #45a049);
   border: none;
-  font-size: 1.8rem;
-  color: #ff4d4f;
+  font-size: 1rem;
+  color: white;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 
   &:hover {
-    transform: scale(1.2);
-    color: #ff7875;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #45a049, #4caf50);
   }
 
-  &.active {
-    color: #fadb14; // жёлтая звезда
+  &:active {
+    transform: translateY(0);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-    border-radius: 0.3rem;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
   }
 }
 

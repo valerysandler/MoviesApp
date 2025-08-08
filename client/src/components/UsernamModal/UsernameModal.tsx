@@ -5,9 +5,11 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSave: (username: string) => void;
+  error?: string | null;
+  successMessage?: string | null;
 }
 
-const UsernameModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
+const UsernameModal: React.FC<Props> = ({ isOpen, onClose, onSave, error, successMessage }) => {
   const [username, setUsername] = useState('');
 
   if (!isOpen) return null;
@@ -32,6 +34,8 @@ const UsernameModal: React.FC<Props> = ({ isOpen, onClose, onSave }) => {
             onChange={(e) => setUsername(e.target.value)}
             required
           />
+          {error && <p className={styles.error}>{error}</p>}
+          {successMessage && <p className={styles.success}>{successMessage}</p>}
           <button type="submit">Save</button>
         </form>
         <button onClick={onClose}>Cancel</button>

@@ -52,6 +52,19 @@
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
+.addButton {
+  background-color: rgba(76, 175, 80, 0.7) !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  font-weight: bold;
+}
+
+.addButton:hover {
+  background-color: rgba(76, 175, 80, 0.9) !important;
+  color: white !important;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5) !important;
+}
+
 .favoriteButton {
   position: absolute;
   top: 10px;
@@ -94,4 +107,18 @@
 .movieDirector {
   font-size: 0.85rem;
   color: #bbb;
+}
+
+.movieInfoLink {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.movieInfoLink:hover {
+  color: #fff;
+}
+
+.movieInfoLink:hover .movieTitle {
+  color: #4caf50;
 }

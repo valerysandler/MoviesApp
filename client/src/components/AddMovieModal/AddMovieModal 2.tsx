@@ -10,12 +10,17 @@ type AddMovieModalProps = {
   onSubmit: (data: Movie, posterFile?: File) => void;
   userId?: number;
 };
+  onClose: () => void;
+  onSubmit: (data: Movie, posterFile?: File) => void;
+  userId?: number;
+};
 
 const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit, userId }) => {
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [customError, setCustomError] = useState<string | null>(null);
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const {
     register,
@@ -150,10 +155,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
               onChange={handleFileChange}
               className={styles.fileInput}
             />
-            {posterFile && (
-              <p className={styles.fileName}>{posterFile.name}</p>
-            )}
-            
+            {!posterFile && <p className={styles.error}>Poster image is required</p>}
             {previewUrl && (
               <div className={styles.previewWrapper}>
                 <img src={previewUrl} alt="Poster preview" className={styles.previewImage} />

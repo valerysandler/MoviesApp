@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { 
-  checkFavorite, 
-  toggleFavorite, 
-  getFavorites 
+import {
+  checkFavorite,
+  toggleFavorite,
+  getFavorites
 } from '../controllers/favorites.controller';
 
 const router = Router();

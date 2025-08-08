@@ -91,3 +91,25 @@ input {
     background-color: #2c2c2c;
   }
 }
+
+.error {
+  color: #ff7875;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: rgba(255, 120, 117, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 120, 117, 0.3);
+}
+
+.success {
+  color: #52c41a;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: rgba(82, 196, 26, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(82, 196, 26, 0.3);
+}

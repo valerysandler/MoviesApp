@@ -1,6 +1,5 @@
 import type { Movie } from "../models/MovieModel";
 
-
 // services/MovieService.ts
 export const searchMovies = async (query: string) => {
   const res = await fetch(`http://localhost:3000/api/movies/search?title=${encodeURIComponent(query)}`);
@@ -16,7 +15,7 @@ export const fetchMovies = async () => {
   return data;
 };
 
-export const addToFavorites = async (movie: Movie, username: string) => {
+export const addToFavorites = async (movie: Movie) => {
   const res = await fetch('http://localhost:3000/api/movies/favorites', {
     method: 'POST',
     headers: {
@@ -36,16 +35,17 @@ export const removeFromFavorites = async (movieId: number) => {
   return res.json();
 };
 
-export const addMovieWithImage = async (movie: Omit<Movie, 'id'>, imageFile: File): Promise<Movie> => {
+export const addMovieWithImage = async (movie: Omit<Movie, 'id'>, imageFile: File, user_id: string): Promise<Movie> => {
   const formData = new FormData();
-  
+
   // Добавляем данные фильма (с проверкой на undefined)
   formData.append('title', movie.title);
   if (movie.year) formData.append('year', movie.year);
   if (movie.genre) formData.append('genre', movie.genre);
   if (movie.runtime) formData.append('runtime', movie.runtime);
   if (movie.director) formData.append('director', movie.director);
-  
+  formData.append('user_id', user_id);
+
   // Добавляем файл изображения
   formData.append('poster', imageFile);
 
@@ -60,5 +60,156 @@ export const addMovieWithImage = async (movie: Omit<Movie, 'id'>, imageFile: Fil
   }
 
   return res.json();
+};
+
+// Add movie without image (for search results)
+export const addMovieToDatabase = async (movie: Omit<Movie, 'id'>, user_id: string): Promise<Movie> => {
+  const res = await fetch('http://localhost:3000/api/movies', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ...movie,
+      user_id: user_id
+    }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to add movie: ${errorData}`);
+  }
+
+  return res.json();
+};
+
+// Check if movie with title already exists
+export const checkMovieExists = async (title: string): Promise<boolean> => {
+  const res = await fetch(`http://localhost:3000/api/movies/check-exists?title=${encodeURIComponent(title)}`);
+  if (!res.ok) throw new Error('Failed to check movie existence');
+  const data = await res.json();
+  return data.exists;
+};
+
+// Update movie without image
+export const updateMovie = async (movie: Movie): Promise<Movie> => {
+  const res = await fetch(`http://localhost:3000/api/movies/${movie.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(movie),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to update movie: ${errorData}`);
+  }
+
+  return res.json();
+};
+
+// Update movie with image
+export const updateMovieWithImage = async (movie: Movie, imageFile: File): Promise<Movie> => {
+  const formData = new FormData();
+
+  // Добавляем данные фильма
+  formData.append('title', movie.title);
+  if (movie.year) formData.append('year', movie.year);
+  if (movie.genre) formData.append('genre', movie.genre);
+  if (movie.runtime) formData.append('runtime', movie.runtime);
+  if (movie.director) formData.append('director', movie.director);
+  if (movie.user_id) formData.append('user_id', movie.user_id.toString());
+
+  // Добавляем файл постера
+  formData.append('poster', imageFile);
+
+  const res = await fetch(`http://localhost:3000/api/movies/${movie.id}`, {
+    method: 'PUT',
+    body: formData, // Не устанавливаем Content-Type, браузер сам установит для multipart/form-data
+  });
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to update movie with image: ${errorData}`);
+  }
+
+  return res.json();
+};
+
+// Delete movie
+export const deleteMovie = async (movieId: number): Promise<void> => {
+  const res = await fetch(`http://localhost:3000/api/movies/${movieId}`, {
+    method: 'DELETE',
+  });
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to delete movie: ${errorData}`);
+  }
+};
+
+// Get movie by ID
+export const getMovieById = async (movieId: number): Promise<Movie> => {
+  const res = await fetch(`http://localhost:3000/api/movies/${movieId}`);
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to fetch movie: ${errorData}`);
+  }
+
+  return res.json();
+};
+
+// Check if movie is in favorites for a user
+export const checkFavoriteStatus = async (movieId: number, userId: string): Promise<boolean> => {
+  const res = await fetch(`http://localhost:3000/api/movies/favorites/check?movieId=${movieId}&userId=${userId}`);
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to check favorite status: ${errorData}`);
+  }
+
+  const data = await res.json();
+  return data.isFavorite;
+};
+
+// Get all movies with favorite status for a user
+export const getMoviesWithFavoriteStatus = async (userId: string): Promise<Movie[]> => {
+  const movies = await fetchMovies();
+
+  // Добавляем статус избранных для каждого фильма
+  const moviesWithFavorites = await Promise.all(
+    movies.map(async (movie: Movie) => {
+      try {
+        const isFavorite = await checkFavoriteStatus(movie.id, userId);
+        return { ...movie, is_favorite: isFavorite };
+      } catch (error) {
+        console.error(`Error checking favorite status for movie ${movie.id}:`, error);
+        return { ...movie, is_favorite: false };
+      }
+    })
+  );
+
+  return moviesWithFavorites;
+};
+
+// Toggle favorite status for a movie
+export const toggleFavorite = async (movieId: number, userId: string): Promise<boolean> => {
+  const res = await fetch('http://localhost:3000/api/movies/favorites/toggle', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ movieId, userId }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.text();
+    throw new Error(`Failed to toggle favorite: ${errorData}`);
+  }
+
+  const data = await res.json();
+  return data.isFavorite;
 };
 

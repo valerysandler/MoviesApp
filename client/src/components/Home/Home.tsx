@@ -2,6 +2,8 @@ import styles from './Home.module.scss';
 import SearchBar from '../SearchBar/SearchBar';
 import { useEffect, useState } from 'react';
 import { searchMovies, fetchMovies, addMovieWithImage } from '../../services/MovieService';
+import { useAuthAction } from '../../hooks/useAuthAction';
+import UsernameModal from '../UsernamModal/UsernameModal';
 import type { Movie } from '../../models/MovieModel';
 import MovieList from '../MovieList/MovieList';
 import AddMovieModal from "../AddMovieModal/AddMovieModal";
@@ -13,6 +15,16 @@ const Home = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
+
+  const {
+    executeWithAuth,
+    showModal,
+    handleUserSubmit,
+    handleModalClose,
+    user,
+    error,
+    successMessage
+  } = useAuthAction();
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -31,7 +43,12 @@ const Home = () => {
     setShowOnlyFavorites((prev) => !prev);
   };
 
-  const handleOpenAddModal = () => setAddModalOpen(true);
+  const handleOpenAddModal = () => {
+    executeWithAuth(() => {
+      setAddModalOpen(true);
+    });
+  };
+
   const handleCloseAddModal = () => setAddModalOpen(false);
 
   const currentMovies = isSearching ? searchResults : databaseMovies;
@@ -63,18 +80,31 @@ const Home = () => {
 
   const handleAddMovie = async (newMovie: Movie, posterFile?: File) => {
     try {
-      if (posterFile) {
+      if (posterFile && user) {
         // Используем новую функцию с загрузкой файла
-        const addedMovie = await addMovieWithImage(newMovie, posterFile);
+        const addedMovie = await addMovieWithImage(newMovie, posterFile, user.id.toString());
         setDatabaseMovies((prev: Movie[]) => [...prev, addedMovie]);
       } else {
         // Fallback на старую функцию (если нет файла)
         setDatabaseMovies((prev: Movie[]) => [...prev, newMovie]);
       }
+      handleCloseAddModal();
     } catch (error) {
       console.error('Error adding movie:', error);
       alert('Failed to add movie. Please try again.');
     }
+  };
+
+  const handleMovieUpdated = (updatedMovie: Movie) => {
+    setDatabaseMovies((prev: Movie[]) =>
+      prev.map(movie => movie.id === updatedMovie.id ? updatedMovie : movie)
+    );
+  };
+
+  const handleMovieDeleted = (movieId: number) => {
+    setDatabaseMovies((prev: Movie[]) =>
+      prev.filter(movie => movie.id !== movieId)
+    );
   };
 
   return (
@@ -104,14 +134,25 @@ const Home = () => {
         isOpen={isAddModalOpen}
         onClose={handleCloseAddModal}
         onSubmit={handleAddMovie}
-        existingTitles={databaseMovies.map((m: Movie) => m.title.toLowerCase())}
+        userId={user?.id}
       />
+
+      <UsernameModal
+        isOpen={showModal}
+        onClose={handleModalClose}
+        onSave={handleUserSubmit}
+        error={error}
+        successMessage={successMessage}
+      />
+
       {filteredMovies.length === 0 ? (
         <p className={styles.noMovies}>No movies found</p>
       ) : (
         <MovieList
           movies={filteredMovies}
           isFromDatabase={!isSearching}
+          onMovieUpdated={handleMovieUpdated}
+          onMovieDeleted={handleMovieDeleted}
         />
       )}
 

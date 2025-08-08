@@ -4,11 +4,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
+  overflow-y: auto;
+  padding: 2rem 1rem;
 }
 
 .modalContent {
@@ -17,8 +19,11 @@
   border-radius: 8px;
   width: 100%;
   max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
   color: white;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  margin: auto;
 }
 
 .modalContent input {
@@ -84,4 +89,16 @@
   max-height: 200px;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.fileName {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
