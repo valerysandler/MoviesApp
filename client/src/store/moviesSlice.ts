@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import type { Movie } from '../models/MovieModel';
-import { fetchMovies, toggleFavorite, deleteMovie, addMovieToDatabase } from '../services/MovieService';
+import type { Movie } from '../types';
+import { movieService } from '../services/movieServiceClean';
+import { logError } from '../utils/errors';
 
 interface MoviesState {
     movies: Movie[];
@@ -23,37 +24,55 @@ const initialState: MoviesState = {
 // Async thunks
 export const fetchMoviesAsync = createAsyncThunk(
     'movies/fetchMovies',
-    async () => {
-        const response = await fetchMovies();
-        return response;
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await movieService.getAllMovies();
+            return response;
+        } catch (error) {
+            logError(error, 'fetchMoviesAsync');
+            return rejectWithValue('Failed to fetch movies');
+        }
     }
 );
 
 export const toggleFavoriteAsync = createAsyncThunk(
     'movies/toggleFavorite',
-    async ({ movieId, userId }: { movieId: number; userId: string }) => {
-        const newFavoriteStatus = await toggleFavorite(movieId, userId);
-        return { movieId, isFavorite: newFavoriteStatus };
+    async ({ movieId, userId }: { movieId: number; userId: string }, { rejectWithValue }) => {
+        try {
+            const newFavoriteStatus = await movieService.toggleFavorite(movieId, userId);
+            return { movieId, isFavorite: newFavoriteStatus };
+        } catch (error) {
+            logError(error, 'toggleFavoriteAsync');
+            return rejectWithValue('Failed to toggle favorite');
+        }
     }
 );
 
 export const deleteMovieAsync = createAsyncThunk(
     'movies/deleteMovie',
-    async (movieId: number) => {
-        await deleteMovie(movieId);
-        return movieId;
+    async (movieId: number, { rejectWithValue }) => {
+        try {
+            await movieService.deleteMovie(movieId);
+            return movieId;
+        } catch (error) {
+            logError(error, 'deleteMovieAsync');
+            return rejectWithValue('Failed to delete movie');
+        }
     }
 );
 
 export const addMovieToDatabaseAsync = createAsyncThunk(
     'movies/addMovieToDatabase',
-    async ({ movie, userId }: { movie: Movie; userId: string }) => {
-        const addedMovie = await addMovieToDatabase(movie, userId);
-        return addedMovie;
+    async ({ movie, userId }: { movie: Movie; userId: string }, { rejectWithValue }) => {
+        try {
+            const addedMovie = await movieService.createMovie(movie, userId);
+            return addedMovie;
+        } catch (error) {
+            logError(error, 'addMovieToDatabaseAsync');
+            return rejectWithValue('Failed to add movie to database');
+        }
     }
-);
-
-const moviesSlice = createSlice({
+); const moviesSlice = createSlice({
     name: 'movies',
     initialState,
     reducers: {
