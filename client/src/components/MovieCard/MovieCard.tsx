@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './MovieCard.module.scss';
 import type { Movie } from '../../models/MovieModel';
 import { getPosterUrl } from '../../utils/imageUtils';
@@ -25,6 +26,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     onAddToDatabase,
     isFromDatabase = true
 }) => {
+    const navigate = useNavigate();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -36,13 +38,21 @@ const MovieCard: React.FC<MovieCardProps> = ({
         handleModalClose
     } = useAuthAction();
 
-    const handleFavoriteClick = () => {
+    const handleMovieClick = () => {
+        if (isFromDatabase && movie.id) {
+            navigate(`/movie/${movie.id}`);
+        }
+    };
+
+    const handleFavoriteClick = (event: React.MouseEvent) => {
+        event.stopPropagation(); // Предотвращаем всплытие события
         if (isFromDatabase) {
             onFavoriteClick(movie);
         }
     };
 
-    const handleEditClick = () => {
+    const handleEditClick = (event: React.MouseEvent) => {
+        event.stopPropagation(); // Предотвращаем всплытие события
         executeWithAuth(() => {
             setIsEditModalOpen(true);
         });
@@ -59,7 +69,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
         }
     };
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (event: React.MouseEvent) => {
+        event.stopPropagation(); // Предотвращаем всплытие события
         executeWithAuth(() => {
             setIsDeleteConfirmOpen(true);
         });
@@ -87,7 +98,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
         setIsDeleteConfirmOpen(false);
     };
 
-    const handleAddToDatabase = () => {
+    const handleAddToDatabase = (event: React.MouseEvent) => {
+        event.stopPropagation(); // Предотвращаем всплытие события
         if (onAddToDatabase) {
             executeWithAuth(() => {
                 onAddToDatabase(movie);
@@ -142,9 +154,17 @@ const MovieCard: React.FC<MovieCardProps> = ({
                     src={getPosterUrl(movie)}
                     alt={movie.title}
                     className={styles.moviePoster}
+                    onClick={handleMovieClick}
+                    style={{ cursor: isFromDatabase ? 'pointer' : 'default' }}
                 />
                 <div className={styles.movieInfo}>
-                    <h2 className={styles.movieTitle}>{movie.title}</h2>
+                    <h2
+                        className={styles.movieTitle}
+                        onClick={handleMovieClick}
+                        style={{ cursor: isFromDatabase ? 'pointer' : 'default' }}
+                    >
+                        {movie.title}
+                    </h2>
                     <p className={styles.movieDetails}>
                         {movie.year} | {movie.runtime} | {movie.genre}
                     </p>

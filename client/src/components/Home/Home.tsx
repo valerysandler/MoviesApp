@@ -1,18 +1,24 @@
 import styles from './Home.module.scss';
 import SearchBar from '../SearchBar/SearchBar';
 import { useEffect, useState } from 'react';
-import { searchMovies, fetchMovies, addMovieWithImage } from '../../services/MovieService';
+import { searchMovies, addMovieWithImage } from '../../services/MovieService';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import type { Movie } from '../../models/MovieModel';
 import MovieList from '../MovieList/MovieList';
 import AddMovieModal from "../AddMovieModal/AddMovieModal";
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  fetchMoviesAsync,
+  setSearchResults,
+  clearSearch,
+  addMovieToDatabaseAsync
+} from '../../store/moviesSlice';
 
 
 const Home = () => {
-  const [databaseMovies, setDatabaseMovies] = useState<Movie[]>([]);
-  const [searchResults, setSearchResults] = useState<Movie[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const dispatch = useAppDispatch();
+  const { movies, searchResults, isLoading, isSearching } = useAppSelector(state => state.movies);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
@@ -27,17 +33,8 @@ const Home = () => {
   } = useAuthAction();
 
   useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        const data = await fetchMovies();
-        setDatabaseMovies(data);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
-    };
-
-    loadMovies();
-  }, []);
+    dispatch(fetchMoviesAsync());
+  }, [dispatch]);
 
   const handleToggleFavorites = () => {
     setShowOnlyFavorites((prev) => !prev);
@@ -51,42 +48,39 @@ const Home = () => {
 
   const handleCloseAddModal = () => setAddModalOpen(false);
 
-  const currentMovies = isSearching ? searchResults : databaseMovies;
+  const currentMovies = isSearching ? searchResults : movies;
   const filteredMovies = showOnlyFavorites
     ? currentMovies.filter((movie: Movie) => movie.is_favorite)
     : currentMovies;
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
-      setIsSearching(false);
-      setSearchResults([]);
+      dispatch(clearSearch());
       return;
     }
 
     try {
       const data = await searchMovies(query);
       console.log(data);
-      setSearchResults(data);
-      setIsSearching(true);
+      dispatch(setSearchResults(data));
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleClearSearch = () => {
-    setIsSearching(false);
-    setSearchResults([]);
+    dispatch(clearSearch());
   };
 
   const handleAddMovie = async (newMovie: Movie, posterFile?: File) => {
     try {
       if (posterFile && user) {
         // Используем новую функцию с загрузкой файла
-        const addedMovie = await addMovieWithImage(newMovie, posterFile, user.id.toString());
-        setDatabaseMovies((prev: Movie[]) => [...prev, addedMovie]);
+        await addMovieWithImage(newMovie, posterFile, user.id.toString());
+        dispatch(fetchMoviesAsync()); // Перезагружаем фильмы
       } else {
-        // Fallback на старую функцию (если нет файла)
-        setDatabaseMovies((prev: Movie[]) => [...prev, newMovie]);
+        // Fallback: добавляем фильм без файла
+        console.log('Adding movie without file:', newMovie);
       }
       handleCloseAddModal();
     } catch (error) {
@@ -95,21 +89,31 @@ const Home = () => {
     }
   };
 
-  const handleMovieUpdated = (updatedMovie: Movie) => {
-    setDatabaseMovies((prev: Movie[]) =>
-      prev.map(movie => movie.id === updatedMovie.id ? updatedMovie : movie)
-    );
+  const handleMovieUpdated = () => {
+    // Обновление будет происходить через Redux в MovieList
+    dispatch(fetchMoviesAsync());
   };
 
-  const handleMovieDeleted = (movieId: number) => {
-    setDatabaseMovies((prev: Movie[]) =>
-      prev.filter(movie => movie.id !== movieId)
-    );
+  const handleMovieDeleted = () => {
+    // Удаление будет происходить через Redux в MovieList
+    dispatch(fetchMoviesAsync());
+  };
+
+  const handleAddToDatabase = async (movie: Movie) => {
+    if (!user) return;
+
+    executeWithAuth(async () => {
+      try {
+        await dispatch(addMovieToDatabaseAsync({ movie, userId: user.id.toString() })).unwrap();
+      } catch (error) {
+        console.error('Error adding movie to database:', error);
+        alert('Failed to add movie to database. Please try again.');
+      }
+    });
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Movies</h1>
       <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
       <div className={styles.toolbar}>
         <button
@@ -153,6 +157,7 @@ const Home = () => {
           isFromDatabase={!isSearching}
           onMovieUpdated={handleMovieUpdated}
           onMovieDeleted={handleMovieDeleted}
+          onAddToDatabase={handleAddToDatabase}
         />
       )}
 

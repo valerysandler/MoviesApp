@@ -96,11 +96,23 @@
   height: auto;
   border-radius: 4px;
   margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.moviePoster:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
 }
 
 .movieTitle {
   font-size: 1.1rem;
   margin: 1rem 0;
+  transition: all 0.2s ease;
+}
+
+.movieTitle:hover {
+  color: #4caf50;
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 .movieDetails,

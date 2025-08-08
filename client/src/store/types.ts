@@ -1,3 +1,5 @@
+import type { MoviesState } from './moviesSlice';
+
 export interface User {
     id: number;
     username: string;
@@ -14,4 +16,5 @@ export interface UserState {
 
 export interface RootState {
     user: UserState;
+    movies: MoviesState;
 }
