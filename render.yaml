@@ -4,9 +4,9 @@ databases:
     user: moviesapp_wdz3_user
 
 services:
-  # Backend Service (Node.js)
+  # Backend Service (Node.js API)
   - type: web
-    name: my-backend
+    name: moviesapp-backend
     env: node
     buildCommand: cd server && npm install && npm run build
     startCommand: cd server && npm start
