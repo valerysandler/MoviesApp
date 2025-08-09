@@ -11,3 +11,4 @@ export * from './useAuthAction';
 export * from './useMovieSearch';
 export * from './useMovieOperations';
 export * from './useMovieFiltering';
+export * from './useNotification';

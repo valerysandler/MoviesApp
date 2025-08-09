@@ -43,7 +43,7 @@ const MovieList: React.FC<MovieListProps> = ({
         console.log('Favorite status updated successfully');
       } catch (err) {
         console.error('Error toggling favorite:', err);
-        alert('Failed to update favorite status. Please try again.');
+        
       }
     });
   };

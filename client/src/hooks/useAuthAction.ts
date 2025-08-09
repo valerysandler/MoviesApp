@@ -1,12 +1,14 @@
 import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useUser } from './useUser';
+import { useNotification } from './useNotification';
 import { fetchOrCreateUser, clearSuccessMessage } from '../store/userSlice';
 import type { AppDispatch } from '../store/store';
 
 export const useAuthAction = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { isAuthenticated, user, error, successMessage } = useUser();
+    const { showSuccess, showError } = useNotification();
     const [showModal, setShowModal] = useState(false);
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
@@ -23,7 +25,8 @@ export const useAuthAction = () => {
 
     const handleUserSubmit = async (username: string) => {
         try {
-            await dispatch(fetchOrCreateUser(username)).unwrap();
+            const result = await dispatch(fetchOrCreateUser(username)).unwrap();
+            showSuccess(`Welcome, ${result.username}! 🎉`);
             // Close modal immediately after successful authentication
             setShowModal(false);
             // Execute the delayed action after successful authentication
@@ -33,6 +36,7 @@ export const useAuthAction = () => {
             }
         } catch (error) {
             console.error('Failed to authenticate user:', error);
+            showError('Failed to authenticate user. Please try again.');
             // Modal remains open on error
         }
     };

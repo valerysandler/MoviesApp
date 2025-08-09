@@ -3,6 +3,7 @@ import { useAppDispatch } from '../store/hooks';
 import { fetchMoviesAsync, addMovieToDatabaseAsync } from '../store/moviesSlice';
 import { addMovieWithImage } from '../services/MovieService';
 import { useUser } from './useUser';
+import { useNotification } from './useNotification';
 import type { Movie } from '../types';
 
 /**
@@ -11,6 +12,7 @@ import type { Movie } from '../types';
 export const useMovieOperations = () => {
     const dispatch = useAppDispatch();
     const { user } = useUser();
+    const { showSuccess, showError } = useNotification();
 
     const refreshMovies = useCallback(() => {
         dispatch(fetchMoviesAsync());
@@ -21,27 +23,40 @@ export const useMovieOperations = () => {
             throw new Error('User must be authenticated');
         }
 
-        if (posterFile) {
-            await addMovieWithImage(newMovie, posterFile, user.id.toString());
-        } else {
-            console.log('Adding movie without file:', newMovie);
-            // TODO: Implement adding movie without file
-        }
+        try {
+            if (posterFile) {
+                await addMovieWithImage(newMovie, posterFile, user.id.toString());
+                showSuccess(`🎬 "${newMovie.title}" has been added successfully!`);
+            } else {
+                console.log('Adding movie without file:', newMovie);
+                showError('Please select a poster image');
+                return;
+            }
 
-        // Refresh movies list
-        await dispatch(fetchMoviesAsync());
-    }, [user, dispatch]);
+            // Refresh movies list
+            await dispatch(fetchMoviesAsync());
+        } catch (error) {
+            showError(`Failed to add "${newMovie.title}". Please try again.`);
+            throw error;
+        }
+    }, [user, dispatch, showSuccess, showError]);
 
     const addMovieToDatabase = useCallback(async (movie: Movie) => {
         if (!user) {
             throw new Error('User must be authenticated');
         }
 
-        await dispatch(addMovieToDatabaseAsync({
-            movie,
-            userId: user.id.toString()
-        })).unwrap();
-    }, [user, dispatch]);
+        try {
+            await dispatch(addMovieToDatabaseAsync({
+                movie,
+                userId: user.id.toString()
+            })).unwrap();
+            showSuccess(`🎬 "${movie.title}" has been added to your collection!`);
+        } catch (error) {
+            showError(`Failed to add "${movie.title}" to your collection.`);
+            throw error;
+        }
+    }, [user, dispatch, showSuccess, showError]);
 
     return {
         refreshMovies,
