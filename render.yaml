@@ -19,12 +19,3 @@ services:
         fromDatabase:
           name: moviesapp-db
           property: connectionString
-
-  # Frontend Service (React)
-  - type: static
-    name: my-frontend
-    buildCommand: cd client && npm install && npm run build # Для фронтенда
-    staticPublishPath: client/dist # Путь к собранному фронтенду
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://my-backend.onrender.com
