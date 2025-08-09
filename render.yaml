@@ -19,3 +19,23 @@ services:
         fromDatabase:
           name: moviesapp-db
           property: internalConnectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: moviesapp-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: moviesapp-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: moviesapp-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: moviesapp-db
+          property: database
+      - key: DB_PORT
+        fromDatabase:
+          name: moviesapp-db
+          property: port
