@@ -1,35 +1,27 @@
-databases:
-  - name: moviesapp-db
-    databaseName: moviesapp
-    user: moviesapp_user
-
+# Exported from Render on 2025-08-09T12:11:19Z
 services:
-  # Backend API Service
-  - type: web
-    name: MoviesApp1
-    env: node
-    buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm start
-    plan: free
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 5000
-      - key: DATABASE_URL
-        fromDatabase:
-          name: moviesapp-db
-          property: connectionString
-
-  # Frontend Static Site
-  - type: web
-    name: moviesapp-frontend
-    env: static
-    plan: free
-    buildCommand: cd client && npm install && npm run build
-    staticPublishPath: client/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://moviesapp-api.onrender.com
-      - key: VITE_SERVER_URL
-        value: https://moviesapp-api.onrender.com
+- type: web
+  name: Movies
+  runtime: node
+  repo: https://github.com/valerysandler/MoviesApp
+  plan: free
+  envVars:
+  - key: OMDB_API_KEY
+    sync: false
+  - key: DB_PORT
+    sync: false
+  - key: DB_NAME
+    sync: false
+  - key: DB_PASSWORD
+    sync: false
+  - key: DB_USER
+    sync: false
+  - key: DB_HOST
+    sync: false
+  - key: PORT
+    sync: false
+  region: oregon
+  buildCommand: npm
+  startCommand: npm start
+  autoDeployTrigger: commit
+version: "1"
