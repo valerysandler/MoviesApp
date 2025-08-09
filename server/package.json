@@ -8,7 +8,7 @@
   "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/app.ts",
+    "start": "node dist/app.js",
     "dev": "nodemon --exec ts-node app.ts",
     "build": "tsc",
     "postinstall": "npm run build",

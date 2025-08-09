@@ -1,17 +1,42 @@
+# Render deployment configuration
 services:
   - type: web
-    name: moviesapp-backend
-    env: node
-    buildCommand: npm install && npm run build # Убедись, что команда для сборки указана
-    startCommand: npm start
+    name: moviesapp
+    runtime: node
+    repo: https://github.com/valerysandler/MoviesApp
     plan: free
-    branch: main
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 5000
       - key: DATABASE_URL
-      - key: VITE_API_URL
-        value: https://moviesapp-api.onrender.com
         fromDatabase:
-          name: moviesapp-db
+          name: movies
           property: connectionString
+    region: oregon
+    autoDeployTrigger: commit
+    
+  - type: web
+    name: moviesapp-frontend
+    runtime: static
+    repo: https://github.com/valerysandler/MoviesApp
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://moviesapp.onrender.com
+      - key: VITE_SERVER_URL
+        value: https://moviesapp.onrender.com
+    region: oregon
+    autoDeployTrigger: commit
+version: "1"
+
+# Exported from Render on 2025-08-09T12:11:19Z
+databases:
+  - type: postgres
+    name: movies
+    plan: free
