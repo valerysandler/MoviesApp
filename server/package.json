@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/app.js",
     "dev": "nodemon --exec ts-node app.ts",
-    "build": "tsc && cp src/database/init.sql dist/src/database/ && cp -r uploads dist/ 2>/dev/null || true",
+    "build": "tsc",
     "postinstall": "npm run build",
     "init-db": "ts-node init-db.ts"
   },
