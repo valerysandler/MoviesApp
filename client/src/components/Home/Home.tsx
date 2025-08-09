@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { searchMovies, addMovieWithImage } from '../../services/MovieService';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import UsernameModal from '../UsernamModal/UsernameModal';
-import type { Movie } from '../../models/MovieModel';
+import type { Movie } from '../../types';
 import MovieList from '../MovieList/MovieList';
 import AddMovieModal from "../AddMovieModal/AddMovieModal";
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -18,7 +18,7 @@ import {
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { movies, searchResults, isLoading, isSearching } = useAppSelector(state => state.movies);
+  const { movies, searchResults, isSearching } = useAppSelector(state => state.movies);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
@@ -35,6 +35,13 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchMoviesAsync());
   }, [dispatch]);
+
+  // When user changes, reload movies to apply saved favorites
+  useEffect(() => {
+    if (user && user.id) {
+      dispatch(fetchMoviesAsync());
+    }
+  }, [dispatch, user]);
 
   const handleToggleFavorites = () => {
     setShowOnlyFavorites((prev) => !prev);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./EditMovieModal.module.scss";
-import type { Movie } from "../../models/MovieModel";
+import type { Movie } from "../../types";
 import { getPosterUrl } from "../../utils/imageUtils";
 import { updateMovie, updateMovieWithImage } from "../../services/MovieService";
 

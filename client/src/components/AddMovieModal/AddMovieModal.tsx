@@ -92,18 +92,18 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
           <input
             type="text"
             placeholder="Title"
-            {...register("title", { 
+            {...register("title", {
               required: "Title is required",
               maxLength: { value: 100, message: "Title must be less than 100 characters" },
               minLength: { value: 1, message: "Title cannot be empty" }
             })}
           />
           {errors.title && <p className={styles.error}>{errors.title.message}</p>}
-          
+
           <input
             type="text"
             placeholder="Year (e.g., 2023)"
-            {...register("year", { 
+            {...register("year", {
               required: "Year is required",
               pattern: { value: /^\d{4}$/, message: "Year must be a 4-digit number" },
               validate: {
@@ -121,23 +121,34 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
           <input
             type="text"
             placeholder="Genre (e.g., Action, Drama)"
-            {...register("genre", { 
+            {...register("genre", {
               required: "Genre is required",
               minLength: { value: 2, message: "Genre must be at least 2 characters" },
               maxLength: { value: 50, message: "Genre must be less than 50 characters" }
             })}
           />
           {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
-          
+
           <input
             type="text"
             placeholder="Runtime (e.g., 120 min)"
-            {...register("runtime", { 
+            {...register("runtime", {
               required: "Runtime is required",
               pattern: { value: /^\d+\s*min?$/i, message: "Runtime must be in format '120 min' or '120'" }
             })}
           />
           {errors.runtime && <p className={styles.error}>{errors.runtime.message}</p>}
+
+          <input
+            type="text"
+            placeholder="Director"
+            {...register("director", {
+              required: "Director is required",
+              minLength: { value: 2, message: "Director name must be at least 2 characters" },
+              maxLength: { value: 100, message: "Director name must be less than 100 characters" }
+            })}
+          />
+          {errors.director && <p className={styles.error}>{errors.director.message}</p>}
 
           <div className={styles.fileInputWrapper}>
             <label htmlFor="posterFile" className={styles.fileLabel}>
@@ -153,7 +164,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
             {posterFile && (
               <p className={styles.fileName}>{posterFile.name}</p>
             )}
-            
+
             {previewUrl && (
               <div className={styles.previewWrapper}>
                 <img src={previewUrl} alt="Poster preview" className={styles.previewImage} />
@@ -161,23 +172,14 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
             )}
           </div>
 
-          <input
-            type="text"
-            placeholder="Director"
-            {...register("director", { 
-              required: "Director is required",
-              minLength: { value: 2, message: "Director name must be at least 2 characters" },
-              maxLength: { value: 100, message: "Director name must be less than 100 characters" }
-            })}
-          />
-          {errors.director && <p className={styles.error}>{errors.director.message}</p>}
-
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Adding..." : "Add"}
-          </button>
-          <button type="button" onClick={handleClose} disabled={isLoading}>
-            Cancel
-          </button>
+          <div className={styles.buttonGroup}>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Adding..." : "Add"}
+            </button>
+            <button type="button" onClick={handleClose} disabled={isLoading}>
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -1,8 +1,13 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: linear-gradient(
+    135deg,
+    rgba(10, 14, 39, 0.9) 0%,
+    rgba(26, 26, 46, 0.95) 50%,
+    rgba(22, 33, 62, 0.9) 100%
+  );
+  backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,106 +15,267 @@
   animation: fadeIn 0.3s ease-out forwards;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .modalContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1c1c1c;
-  padding: 2rem;
-  border-radius: 16px;
+  background: linear-gradient(
+    145deg,
+    rgba(20, 25, 60, 0.95) 0%,
+    rgba(30, 35, 70, 0.95) 50%,
+    rgba(25, 35, 65, 0.95) 100%
+  );
+  backdrop-filter: blur(20px);
+  padding: 2.5rem;
+  border-radius: 20px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   gap: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modalContent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(102, 126, 234, 0.1) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(118, 75, 162, 0.1) 0%,
+      transparent 70%
+    );
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.modalContent > * {
+  position: relative;
+  z-index: 1;
 }
 
 .modalTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 1rem;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.modalTitle::before {
+  content: "👤";
+  font-size: 1.5rem;
+  background: none;
+  -webkit-text-fill-color: initial;
 }
 
 .formGroup {
   display: flex;
   width: 100%;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 input {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.2rem;
   border-radius: 12px;
-  border: 2px solid transparent;
-  background: #2c2c2c;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 
   &:focus {
-    border-color: #e50914;
     outline: none;
+    border-color: rgba(102, 126, 234, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2),
+      0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
   }
 
   &::placeholder {
-    color: #888;
+    color: rgba(255, 255, 255, 0.5);
   }
 }
 
 .saveButton {
-  padding: 0.75rem 1.25rem;
-  background-color: #e50914;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 600;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  min-width: 100px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.5s;
+  }
 
   &:hover {
-    background-color: #f40612;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #7c8ef0 0%, #8259b5 100%);
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
 .cancelButton {
   width: 100%;
-  padding: 0.75rem;
-  background-color: transparent;
-  border: 2px solid #444;
-  color: #aaa;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 600;
   font-size: 1rem;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 
   &:hover {
     color: #fff;
-    border-color: #666;
-    background-color: #2c2c2c;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 }
 
 .error {
-  color: #ff7875;
-  font-size: 0.9rem;
+  color: #ff6b6b;
+  font-size: 0.95rem;
   text-align: center;
   margin: 0.5rem 0;
-  padding: 0.5rem;
-  background-color: rgba(255, 120, 117, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 120, 117, 0.3);
+  padding: 1rem;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: "⚠️";
+    font-size: 0.9rem;
+  }
 }
 
 .success {
-  color: #52c41a;
-  font-size: 0.9rem;
+  color: #4ecdc4;
+  font-size: 0.95rem;
   text-align: center;
   margin: 0.5rem 0;
-  padding: 0.5rem;
-  background-color: rgba(82, 196, 26, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(82, 196, 26, 0.3);
+  padding: 1rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: "✅";
+    font-size: 0.9rem;
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 2rem;
+    max-width: 95vw;
+  }
+
+  .formGroup {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .saveButton {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 1.5rem;
+  }
+
+  .modalTitle {
+    font-size: 1.5rem;
+  }
+
+  .modalTitle::before {
+    font-size: 1.2rem;
+  }
 }

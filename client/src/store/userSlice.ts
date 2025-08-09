@@ -41,6 +41,8 @@ const userSlice = createSlice({
             state.error = null;
             state.successMessage = null;
             localStorage.removeItem('user');
+            // Clear favorites cache when user logs out
+            localStorage.removeItem('movieFavorites');
         },
         loadUserFromStorage: (state, action: PayloadAction<User>) => {
             state.user = action.payload;

@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
-  max-width: 500px;
+  margin-bottom: 2rem;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   gap: 0.5rem;
@@ -17,67 +17,148 @@
 
 .input {
   width: 100%;
-  height: 2.5rem;
-  padding: 0.75rem 2.5rem 0.75rem 3rem; /* увеличили правый padding для кнопки */
+  height: 3rem;
+  padding: 0.75rem 3.5rem 0.75rem 3rem;
   box-sizing: border-box;
-  padding: 0.75rem 3rem 0.75rem 2.5rem; /* увеличили правый padding для кнопки */
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  color: #333;
+  color: #fff;
+  font-weight: 400;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .input::placeholder {
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 300;
 }
 
 .input:focus {
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(102, 126, 234, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(102, 126, 234, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.input:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .icon {
   position: absolute;
-  left: 0.8rem;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 1rem;
-  height: 1rem;
-  color: #666;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
   pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.input:focus + .icon {
+  color: rgba(102, 126, 234, 0.8);
 }
 
 .errorMsg {
-  color: #d9534f;
-  font-size: 0.8rem;
+  color: #ff6b6b;
+  font-size: 0.9rem;
   align-self: flex-start;
-  padding-left: 5px;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .clearButton {
   position: absolute;
-  right: 0.5rem;
+  right: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #666;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  width: 1.5rem;
-  height: 1.5rem;
+  transition: all 0.3s ease;
+  width: 2rem;
+  height: 2rem;
+  backdrop-filter: blur(10px);
 }
 
 .clearButton:hover {
-  color: #333;
-  background-color: rgba(0, 0, 0, 0.1);
+  color: #fff;
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.clearButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Анимация для фокуса */
+@keyframes focusRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+  }
+}
+
+.input:focus {
+  animation: focusRipple 0.6s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .form {
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .input {
+    height: 2.75rem;
+    font-size: 1rem;
+    padding: 0.75rem 3rem 0.75rem 2.5rem;
+  }
+
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    left: 0.75rem;
+  }
+
+  .clearButton {
+    width: 1.75rem;
+    height: 1.75rem;
+    right: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .input {
+    height: 2.5rem;
+    font-size: 0.95rem;
+    border-radius: 20px;
+  }
+
+  .errorMsg {
+    font-size: 0.85rem;
+  }
 }

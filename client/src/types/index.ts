@@ -11,8 +11,8 @@ export interface Movie {
     director?: string;
     poster?: string;
     poster_local?: string;
-    user_id?: number;
-    is_favorite?: boolean;
+    user_id: number;
+    is_favorite: boolean;
 }
 
 export interface User {

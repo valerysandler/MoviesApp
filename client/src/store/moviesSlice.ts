@@ -9,9 +9,30 @@ interface MoviesState {
     isLoading: boolean;
     error: string | null;
     isSearching: boolean;
+    favorites: { [movieId: number]: boolean }; // Local cache of favorite statuses
 }
 
 export type { MoviesState };
+
+// Helper function to load favorites from localStorage
+const loadFavoritesFromStorage = (): { [movieId: number]: boolean } => {
+    try {
+        const savedFavorites = localStorage.getItem('movieFavorites');
+        return savedFavorites ? JSON.parse(savedFavorites) : {};
+    } catch (error) {
+        console.error('Failed to load favorites from localStorage:', error);
+        return {};
+    }
+};
+
+// Helper function to save favorites to localStorage
+const saveFavoritesToStorage = (favorites: { [movieId: number]: boolean }) => {
+    try {
+        localStorage.setItem('movieFavorites', JSON.stringify(favorites));
+    } catch (error) {
+        console.error('Failed to save favorites to localStorage:', error);
+    }
+};
 
 const initialState: MoviesState = {
     movies: [],
@@ -19,18 +40,62 @@ const initialState: MoviesState = {
     isLoading: false,
     error: null,
     isSearching: false,
+    favorites: loadFavoritesFromStorage(),
 };
 
 // Async thunks
 export const fetchMoviesAsync = createAsyncThunk(
     'movies/fetchMovies',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
         try {
             const response = await movieService.getAllMovies();
-            return response;
+            const state = getState() as { movies: MoviesState };
+            const localFavorites = state.movies.favorites;
+
+            // Apply local favorite status to movies
+            const moviesWithFavorites = response.map(movie => ({
+                ...movie,
+                is_favorite: localFavorites[movie.id] || false
+            }));
+
+            return moviesWithFavorites;
         } catch (error) {
             logError(error, 'fetchMoviesAsync');
             return rejectWithValue('Failed to fetch movies');
+        }
+    }
+);
+
+// New thunk to sync favorites with server
+export const syncFavoritesAsync = createAsyncThunk(
+    'movies/syncFavorites',
+    async (userId: string, { rejectWithValue, getState }) => {
+        try {
+            const state = getState() as { movies: MoviesState };
+            const localFavorites = state.movies.favorites;
+            const movies = state.movies.movies;
+
+            // Sync each favorite status with server
+            const syncPromises = movies.map(async (movie) => {
+                if (localFavorites[movie.id] !== undefined) {
+                    try {
+                        const serverStatus = await movieService.checkFavoriteStatus(movie.id, userId);
+                        return { movieId: movie.id, serverStatus, localStatus: localFavorites[movie.id] };
+                    } catch (error) {
+                        logError(error, `syncFavoritesAsync for movie ${movie.id}`);
+                        return null;
+                    }
+                }
+                return null;
+            });
+
+            const syncResults = await Promise.all(syncPromises);
+            const validResults = syncResults.filter(result => result !== null);
+
+            return validResults;
+        } catch (error) {
+            logError(error, 'syncFavoritesAsync');
+            return rejectWithValue('Failed to sync favorites');
         }
     }
 );
@@ -98,6 +163,36 @@ export const addMovieToDatabaseAsync = createAsyncThunk(
                 movie => !(movie.title === action.payload.title && movie.year === action.payload.year)
             );
         },
+        // New action to update favorite status locally
+        setFavoriteLocal: (state, action: PayloadAction<{ movieId: number; isFavorite: boolean }>) => {
+            const { movieId, isFavorite } = action.payload;
+            state.favorites[movieId] = isFavorite;
+            saveFavoritesToStorage(state.favorites);
+
+            // Update movie in movies array
+            const movie = state.movies.find(m => m.id === movieId);
+            if (movie) {
+                movie.is_favorite = isFavorite;
+            }
+
+            // Update movie in search results
+            const searchMovie = state.searchResults.find(m => m.id === movieId);
+            if (searchMovie) {
+                searchMovie.is_favorite = isFavorite;
+            }
+        },
+        // Action to clear all favorites (e.g., on logout)
+        clearFavorites: (state) => {
+            state.favorites = {};
+            saveFavoritesToStorage({});
+            // Update all movies to remove favorite status
+            state.movies.forEach(movie => {
+                movie.is_favorite = false;
+            });
+            state.searchResults.forEach(movie => {
+                movie.is_favorite = false;
+            });
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -114,9 +209,39 @@ export const addMovieToDatabaseAsync = createAsyncThunk(
                 state.isLoading = false;
                 state.error = action.error.message || 'Failed to fetch movies';
             })
+            // Sync favorites
+            .addCase(syncFavoritesAsync.fulfilled, (state, action) => {
+                // Update favorites based on sync results
+                action.payload.forEach((result: any) => {
+                    if (result && result.movieId) {
+                        // Use server status as the source of truth
+                        state.favorites[result.movieId] = result.serverStatus;
+
+                        // Update movie objects
+                        const movie = state.movies.find(m => m.id === result.movieId);
+                        if (movie) {
+                            movie.is_favorite = result.serverStatus;
+                        }
+
+                        const searchMovie = state.searchResults.find(m => m.id === result.movieId);
+                        if (searchMovie) {
+                            searchMovie.is_favorite = result.serverStatus;
+                        }
+                    }
+                });
+
+                // Save updated favorites to localStorage
+                saveFavoritesToStorage(state.favorites);
+            })
             // Toggle favorite
             .addCase(toggleFavoriteAsync.fulfilled, (state, action) => {
                 const { movieId, isFavorite } = action.payload;
+
+                // Update local favorites cache
+                state.favorites[movieId] = isFavorite;
+                saveFavoritesToStorage(state.favorites);
+
+                // Update movie objects
                 const movie = state.movies.find(m => m.id === movieId);
                 if (movie) {
                     movie.is_favorite = isFavorite;
@@ -128,7 +253,11 @@ export const addMovieToDatabaseAsync = createAsyncThunk(
             })
             // Delete movie
             .addCase(deleteMovieAsync.fulfilled, (state, action) => {
-                state.movies = state.movies.filter(movie => movie.id !== action.payload);
+                const movieId = action.payload;
+                state.movies = state.movies.filter(movie => movie.id !== movieId);
+                // Remove from favorites cache
+                delete state.favorites[movieId];
+                saveFavoritesToStorage(state.favorites);
             })
             // Add movie to database
             .addCase(addMovieToDatabaseAsync.fulfilled, (state, action) => {
@@ -147,6 +276,8 @@ export const {
     updateMovie,
     addMovie,
     removeMovieFromSearch,
+    setFavoriteLocal,
+    clearFavorites,
 } = moviesSlice.actions;
 
 export default moviesSlice.reducer;

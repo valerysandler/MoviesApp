@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './MovieCard.module.scss';
-import type { Movie } from '../../models/MovieModel';
+import type { Movie } from '../../types';
 import { getPosterUrl } from '../../utils/imageUtils';
 import EditMovieModal from '../EditMovieModal/EditMovieModal';
 import UsernameModal from '../UsernamModal/UsernameModal';

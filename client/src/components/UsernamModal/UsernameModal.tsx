@@ -25,20 +25,30 @@ const UsernameModal: React.FC<Props> = ({ isOpen, onClose, onSave, error, succes
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <h2>Enter your name</h2>
+        <h2 className={styles.modalTitle}>Enter your name</h2>
+
+        {error && <div className={styles.error}>{error}</div>}
+        {successMessage && <div className={styles.success}>{successMessage}</div>}
+
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          {error && <p className={styles.error}>{error}</p>}
-          {successMessage && <p className={styles.success}>{successMessage}</p>}
-          <button type="submit">Save</button>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoFocus
+            />
+            <button type="submit" className={styles.saveButton}>
+              Save
+            </button>
+          </div>
         </form>
-        <button onClick={onClose}>Cancel</button>
+
+        <button type="button" onClick={onClose} className={styles.cancelButton}>
+          Cancel
+        </button>
       </div>
     </div>
   );

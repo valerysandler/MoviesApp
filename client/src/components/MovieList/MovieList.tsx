@@ -3,9 +3,9 @@ import styles from './MovieList.module.scss';
 import MovieCard from '../MovieCard/MovieCard';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
-import type { Movie } from '../../models/MovieModel';
+import type { Movie } from '../../types';
 import { useAppDispatch } from '../../store/hooks';
-import { toggleFavoriteAsync, deleteMovieAsync, addMovieToDatabaseAsync } from '../../store/moviesSlice';
+import { toggleFavoriteAsync } from '../../store/moviesSlice';
 
 interface MovieListProps {
   movies: Movie[];
