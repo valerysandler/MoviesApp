@@ -20,6 +20,7 @@ const connectionString = process.env.DATABASE_URL;
 if (process.env.NODE_ENV === 'production') {
   console.log('DATABASE_URL exists:', !!connectionString);
   console.log('DATABASE_URL length:', connectionString ? connectionString.length : 0);
+  console.log('SSL configuration:', process.env.NODE_ENV === 'production' ? '{ rejectUnauthorized: false }' : 'false');
   if (connectionString) {
     // Show first part of connection string for debugging (hide password)
     const urlParts = connectionString.split('@');
@@ -29,7 +30,12 @@ if (process.env.NODE_ENV === 'production') {
 
 export const pool = new Pool(
   connectionString
-    ? { connectionString, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false }
+    ? { 
+        connectionString, 
+        ssl: process.env.NODE_ENV === 'production' 
+          ? { rejectUnauthorized: false } 
+          : false 
+      }
     : dbConfig
 );
 
