@@ -2,6 +2,12 @@
  * Application configuration constants
  */
 
+// Debug logging for environment variables
+console.log('Environment check:');
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('REACT_APP_API_URL:', import.meta.env.REACT_APP_API_URL);
+console.log('NODE_ENV:', import.meta.env.MODE);
+
 export const API_CONFIG = {
     BASE_URL: import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || 'http://localhost:5000',
     ENDPOINTS: {
@@ -11,6 +17,9 @@ export const API_CONFIG = {
     },
     TIMEOUT: 10000, // 10 seconds
 } as const;
+
+// Debug log the final API URL
+console.log('Final API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
 
 export const UI_CONFIG = {
     ANIMATIONS: {
