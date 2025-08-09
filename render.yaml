@@ -16,10 +16,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-  fromDatabase:
-    name: moviesapp-db
-    property: connectionString
-
+        fromDatabase:
+          name: dpg-d2bl2e7diees73es4kjg-a-db  # Указываем правильное имя базы данных
+          property: connectionString
 
   # Frontend Service (React)
   - type: web
