@@ -11,7 +11,7 @@ export const fetchOrCreateUser = createAsyncThunk(
         const response = await axios.post(buildApiUrl('/api/users'), {
             username: username.trim()
         });
-        if (response.status !== 200) {
+        if (response.status !== 200 && response.status !== 201) {
             throw new Error('Failed to create/fetch user');
         }
         return response.data;
