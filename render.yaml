@@ -44,8 +44,9 @@ services:
           property: password
 
   # Frontend Static Site
-  - type: static_site
+  - type: web
     name: moviesapp-frontend
+    runtime: static
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
     envVars:
