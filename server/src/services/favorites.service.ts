@@ -3,10 +3,10 @@ import { Favorite } from '../models/favorite.model';
 import { getUserIdByUsername } from './user.service';
 
 // Check if movie is in favorites for a user
-export async function checkFavoriteStatus(movieId: number, userId: string): Promise<boolean> {
+export async function checkFavoriteStatus(movieId: number, username: string): Promise<boolean> {
   try {
     // Get numeric user ID
-    const numericUserId = await getUserIdByUsername(userId);
+    const numericUserId = await getUserIdByUsername(username);
 
     const query = `
       SELECT EXISTS(
@@ -24,10 +24,10 @@ export async function checkFavoriteStatus(movieId: number, userId: string): Prom
 }
 
 // Add movie to favorites
-export async function addToFavorites(movieId: number, userId: string): Promise<Favorite> {
+export async function addToFavorites(movieId: number, username: string): Promise<Favorite> {
   try {
     // Get numeric user ID
-    const numericUserId = await getUserIdByUsername(userId);
+    const numericUserId = await getUserIdByUsername(username);
 
     const query = `
       INSERT INTO favorites (user_id, movie_id)
@@ -45,10 +45,10 @@ export async function addToFavorites(movieId: number, userId: string): Promise<F
 }
 
 // Remove movie from favorites
-export async function removeFromFavorites(movieId: number, userId: string): Promise<void> {
+export async function removeFromFavorites(movieId: number, username: string): Promise<void> {
   try {
     // Get numeric user ID
-    const numericUserId = await getUserIdByUsername(userId);
+    const numericUserId = await getUserIdByUsername(username);
 
     const query = `
       DELETE FROM favorites 
@@ -62,29 +62,35 @@ export async function removeFromFavorites(movieId: number, userId: string): Prom
   }
 }
 
-// Toggle favorite status
-export async function toggleFavoriteStatus(movieId: number, userId: string): Promise<boolean> {
+// Toggle movie in favorites for a user (add if not present, remove if present)
+export async function toggleFavorite(movieId: number, username: string): Promise<{ action: 'added' | 'removed', isInFavorites: boolean }> {
   try {
-    const isFavorite = await checkFavoriteStatus(movieId, userId);
+    // Get numeric user ID
+    const numericUserId = await getUserIdByUsername(username);
 
-    if (isFavorite) {
-      await removeFromFavorites(movieId, userId);
-      return false;
+    // Check if already in favorites
+    const isCurrentlyFavorite = await checkFavoriteStatus(movieId, username);
+
+    if (isCurrentlyFavorite) {
+      // Remove from favorites
+      await removeFromFavorites(movieId, username);
+      return { action: 'removed', isInFavorites: false };
     } else {
-      await addToFavorites(movieId, userId);
-      return true;
+      // Add to favorites
+      await addToFavorites(movieId, username);
+      return { action: 'added', isInFavorites: true };
     }
   } catch (error) {
-    console.error('Error toggling favorite status:', error);
+    console.error('Error toggling favorite:', error);
     throw error;
   }
 }
 
 // Get all favorites for a user
-export async function getUserFavorites(userId: string): Promise<any[]> {
+export async function getUserFavorites(username: string): Promise<any[]> {
   try {
     // Get numeric user ID
-    const numericUserId = await getUserIdByUsername(userId);
+    const numericUserId = await getUserIdByUsername(username);
 
     const query = `
       SELECT m.*, f.created_at as favorited_at

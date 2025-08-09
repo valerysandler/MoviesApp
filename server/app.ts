@@ -20,7 +20,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Import routes
 app.use('/api/users', userRoute); // Use user routes
-app.use('/api/movies/favorites', favoritesRoute); // Use favorites routes (должен быть перед /api/movies)
+app.use('/api/movies/favorites', favoritesRoute); // Use favorites routes 
 app.use('/api/movies', moviesRoute); // Use movies routes
 
 app.get('/', (_req, res) => {

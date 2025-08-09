@@ -10,7 +10,7 @@ import {
     checkMovieExists,
     updateMovieInDatabase,
     getMovieById
-} from "../services/movis.service";
+} from "../services/movies.service";
 import { getUserIdByUsername } from "../services/user.service";
 
 // Get movies from https://www.omdbapi.com/ AJAX request

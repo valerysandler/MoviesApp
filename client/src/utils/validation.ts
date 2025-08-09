@@ -83,5 +83,6 @@ export const sanitizeMovieData = (data: MovieFormData): MovieFormData => {
         director: data.director?.trim() || undefined,
         poster: data.poster || undefined,
         poster_local: data.poster_local || undefined,
+        is_favorite: data.is_favorite || false,
     };
 };

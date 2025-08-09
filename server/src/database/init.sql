@@ -1,4 +1,4 @@
--- Create users table
+-- Create users table if it does not exist
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create movies table
+-- Create movies table if it does not exist
 CREATE TABLE IF NOT EXISTS movies (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -28,17 +28,16 @@ CREATE TABLE IF NOT EXISTS favorites (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES movies(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, movie_id) -- Prevent duplicate favorites
+    UNIQUE(user_id, movie_id) 
 );
 
 -- Create indexes for better performance
+-- Essential indexes based on application query patterns
 CREATE INDEX IF NOT EXISTS idx_movies_user_id ON movies(user_id);
-CREATE INDEX IF NOT EXISTS idx_movies_external_id ON movies(external_id);
 CREATE INDEX IF NOT EXISTS idx_movies_title ON movies(title);
 CREATE INDEX IF NOT EXISTS idx_movies_is_favorite ON movies(is_favorite);
-CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id);
-CREATE INDEX IF NOT EXISTS idx_favorites_movie_id ON favorites(movie_id);
 CREATE INDEX IF NOT EXISTS idx_favorites_user_movie ON favorites(user_id, movie_id);
+
 
 -- Insert a default user for testing
 INSERT INTO users (username) VALUES ('testuser') ON CONFLICT (username) DO NOTHING;

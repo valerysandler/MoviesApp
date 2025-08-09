@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   checkFavorite,
-  toggleFavorite,
+  toggleFavoriteController,
   getFavorites
 } from '../controllers/favorites.controller';
 
@@ -11,7 +11,7 @@ const router = Router();
 router.get('/check', checkFavorite);
 
 // POST /api/favorites/toggle - Toggle favorite status
-router.post('/toggle', toggleFavorite);
+router.post('/toggle', toggleFavoriteController);
 
 // GET /api/favorites/:userId - Get user's favorites
 router.get('/:userId', getFavorites);

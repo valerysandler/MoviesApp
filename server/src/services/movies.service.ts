@@ -133,6 +133,75 @@ export async function deleteMovieFromDatabase(id: number): Promise<boolean> {
     }
 }
 
+// Check if movie with title already exists
+export async function checkMovieExists(title: string): Promise<boolean> {
+    try {
+        const result = await pool.query(
+            'SELECT id FROM movies WHERE LOWER(title) = LOWER($1)',
+            [title.trim()]
+        );
+        return result.rows.length > 0;
+    } catch (error) {
+        console.error('Error checking movie existence:', error);
+        throw new Error('Internal server error');
+    }
+}
+
+// Update movie in database
+export async function updateMovieInDatabase(id: number, movie: Partial<Omit<Movie, 'id'>>): Promise<Movie> {
+    try {
+        // Создаем динамический SQL запрос в зависимости от наличия poster_local
+        let updateQuery: string;
+        let queryParams: any[];
+
+        if (movie.poster_local !== undefined) {
+            // Обновляем с poster_local
+            updateQuery = `
+                UPDATE movies 
+                SET title = $1, year = $2, runtime = $3, genre = $4, director = $5, poster_local = $6, updated_at = CURRENT_TIMESTAMP
+                WHERE id = $7
+                RETURNING *
+            `;
+            queryParams = [
+                movie.title,
+                movie.year,
+                movie.runtime,
+                movie.genre,
+                movie.director,
+                movie.poster_local,
+                id
+            ];
+        } else {
+            // Обновляем без poster_local
+            updateQuery = `
+                UPDATE movies 
+                SET title = $1, year = $2, runtime = $3, genre = $4, director = $5, updated_at = CURRENT_TIMESTAMP
+                WHERE id = $6
+                RETURNING *
+            `;
+            queryParams = [
+                movie.title,
+                movie.year,
+                movie.runtime,
+                movie.genre,
+                movie.director,
+                id
+            ];
+        }
+
+        const result = await pool.query(updateQuery, queryParams);
+
+        if (result.rows.length === 0) {
+            throw new Error('Movie not found');
+        }
+
+        return result.rows[0] as Movie;
+    } catch (error) {
+        console.error('Error updating movie in database:', error);
+        throw new Error('Internal server error');
+    }
+}
+
 export async function searchMovies(title: string) {
     const response = await axios.get('http://www.omdbapi.com/', {
         params: {
