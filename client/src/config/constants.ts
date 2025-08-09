@@ -8,8 +8,22 @@ console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 console.log('REACT_APP_API_URL:', import.meta.env.REACT_APP_API_URL);
 console.log('NODE_ENV:', import.meta.env.MODE);
 
+// Force production API URL if environment variables are not set
+const getApiUrl = () => {
+    const viteUrl = import.meta.env.VITE_API_URL;
+    const reactUrl = import.meta.env.REACT_APP_API_URL;
+    const defaultUrl = 'http://localhost:5000';
+
+    // If we're in production mode, force the production URL
+    if (import.meta.env.MODE === 'production') {
+        return viteUrl || reactUrl || 'https://moviesapp-3.onrender.com';
+    }
+
+    return viteUrl || reactUrl || defaultUrl;
+};
+
 export const API_CONFIG = {
-    BASE_URL: import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL || 'http://localhost:5000',
+    BASE_URL: getApiUrl(),
     ENDPOINTS: {
         MOVIES: '/api/movies',
         FAVORITES: '/api/movies/favorites',
