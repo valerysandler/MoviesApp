@@ -9,43 +9,43 @@ import type { Movie } from '../types';
  * Custom hook for movie operations (add, update, delete)
  */
 export const useMovieOperations = () => {
-  const dispatch = useAppDispatch();
-  const { user } = useUser();
+    const dispatch = useAppDispatch();
+    const { user } = useUser();
 
-  const refreshMovies = useCallback(() => {
-    dispatch(fetchMoviesAsync());
-  }, [dispatch]);
+    const refreshMovies = useCallback(() => {
+        dispatch(fetchMoviesAsync());
+    }, [dispatch]);
 
-  const addMovieWithFile = useCallback(async (newMovie: Movie, posterFile?: File) => {
-    if (!user) {
-      throw new Error('User must be authenticated');
-    }
+    const addMovieWithFile = useCallback(async (newMovie: Movie, posterFile?: File) => {
+        if (!user) {
+            throw new Error('User must be authenticated');
+        }
 
-    if (posterFile) {
-      await addMovieWithImage(newMovie, posterFile, user.id.toString());
-    } else {
-      console.log('Adding movie without file:', newMovie);
-      // TODO: Implement adding movie without file
-    }
-    
-    // Refresh movies list
-    await dispatch(fetchMoviesAsync());
-  }, [user, dispatch]);
+        if (posterFile) {
+            await addMovieWithImage(newMovie, posterFile, user.id.toString());
+        } else {
+            console.log('Adding movie without file:', newMovie);
+            // TODO: Implement adding movie without file
+        }
 
-  const addMovieToDatabase = useCallback(async (movie: Movie) => {
-    if (!user) {
-      throw new Error('User must be authenticated');
-    }
+        // Refresh movies list
+        await dispatch(fetchMoviesAsync());
+    }, [user, dispatch]);
 
-    await dispatch(addMovieToDatabaseAsync({ 
-      movie, 
-      userId: user.id.toString() 
-    })).unwrap();
-  }, [user, dispatch]);
+    const addMovieToDatabase = useCallback(async (movie: Movie) => {
+        if (!user) {
+            throw new Error('User must be authenticated');
+        }
 
-  return {
-    refreshMovies,
-    addMovieWithFile,
-    addMovieToDatabase
-  };
+        await dispatch(addMovieToDatabaseAsync({
+            movie,
+            userId: user.id.toString()
+        })).unwrap();
+    }, [user, dispatch]);
+
+    return {
+        refreshMovies,
+        addMovieWithFile,
+        addMovieToDatabase
+    };
 };

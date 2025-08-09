@@ -3,6 +3,7 @@
 If the render.yaml Blueprint fails, create services manually:
 
 ## 1. Create PostgreSQL Database
+
 - Go to Render Dashboard
 - Click "New +" → "PostgreSQL"
 - Name: `moviesapp-db`
@@ -13,6 +14,7 @@ If the render.yaml Blueprint fails, create services manually:
 - **Copy the External Database URL** for later use
 
 ## 2. Create Backend Web Service
+
 - Click "New +" → "Web Service"
 - Connect your GitHub repository: `MoviesApp`
 - Name: `moviesapp-api`
@@ -25,6 +27,7 @@ If the render.yaml Blueprint fails, create services manually:
 - Plan: Free
 
 ### Environment Variables for Backend:
+
 ```
 NODE_ENV=production
 PORT=5000
@@ -32,6 +35,7 @@ DATABASE_URL=[paste the External Database URL from step 1]
 ```
 
 ## 3. Create Frontend Static Site
+
 - Click "New +" → "Static Site"
 - Connect your GitHub repository: `MoviesApp`
 - Name: `moviesapp-frontend`
@@ -41,6 +45,7 @@ DATABASE_URL=[paste the External Database URL from step 1]
 - Publish Directory: `client/dist`
 
 ### Environment Variables for Frontend:
+
 ```
 VITE_API_URL=https://moviesapp-api.onrender.com
 VITE_SERVER_URL=https://moviesapp-api.onrender.com
@@ -49,11 +54,13 @@ VITE_SERVER_URL=https://moviesapp-api.onrender.com
 **Note**: Replace `moviesapp-api` with your actual backend service URL once it's created.
 
 ## 4. Verification
+
 1. Backend should be accessible at: `https://moviesapp-api.onrender.com/`
 2. Frontend should be accessible at: `https://moviesapp-frontend.onrender.com/`
 3. Check logs if any service fails to start
 
 ## 5. Common Issues
+
 - **Build failures**: Check that package.json has all required dependencies
 - **Database connection**: Verify DATABASE_URL is correct
 - **CORS errors**: Ensure API URL is properly set in frontend environment variables

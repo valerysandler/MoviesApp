@@ -15,13 +15,13 @@ import { fetchMoviesAsync } from '../../store/moviesSlice';
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  
+
   // Custom hooks for separation of concerns
   const { filteredMovies, showOnlyFavorites, toggleFavoritesFilter, isSearching } = useMovieFiltering();
   const { handleSearch, handleClearSearch } = useMovieSearch();
   const { refreshMovies, addMovieWithFile, addMovieToDatabase } = useMovieOperations();
   const { isOpen: isAddModalOpen, openModal: openAddModal, closeModal: closeAddModal } = useModal();
-  
+
   const {
     executeWithAuth,
     showModal,
@@ -75,7 +75,7 @@ const Home = () => {
   return (
     <div className={styles.container}>
       <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
-      
+
       <div className={styles.toolbar}>
         <button
           className={`${styles.iconButton} ${showOnlyFavorites ? styles.active : ''}`}

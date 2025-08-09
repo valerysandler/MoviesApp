@@ -25,6 +25,7 @@ git push origin main
 1. **Откройте [Render Dashboard](https://dashboard.render.com)**
 
 2. **Создайте PostgreSQL базу данных:**
+
    - Нажмите "New +" → "PostgreSQL"
    - Name: `moviesapp-db`
    - Database Name: `moviesapp`
@@ -34,6 +35,7 @@ git push origin main
    - Нажмите "Create Database"
 
 3. **Создайте Web Service (Backend API):**
+
    - Нажмите "New +" → "Web Service"
    - Connect your GitHub repository
    - Name: `moviesapp-api`
@@ -46,6 +48,7 @@ git push origin main
    - Plan: Free
 
 4. **Настройте Environment Variables для API:**
+
    ```
    NODE_ENV=production
    PORT=5000
@@ -53,6 +56,7 @@ git push origin main
    ```
 
 5. **Создайте Static Site (Frontend):**
+
    - Нажмите "New +" → "Static Site"
    - Connect your GitHub repository
    - Name: `moviesapp-frontend`
@@ -97,6 +101,7 @@ npm run dev
 ## 🏗️ Архитектура приложения
 
 ### Frontend (React + TypeScript)
+
 - **React 19** с TypeScript
 - **Redux Toolkit** для управления состоянием
 - **Vite** для сборки
@@ -104,12 +109,14 @@ npm run dev
 - **Vitest** для тестирования
 
 ### Backend (Node.js + Express)
+
 - **Express.js** сервер
 - **TypeScript** для типизации
 - **PostgreSQL** база данных
 - **Multer** для загрузки файлов
 
 ### Архитектурные паттерны
+
 - **Custom React Hooks** для переиспользования логики
 - **Redux Slices** для управления состоянием
 - **Layered Architecture** (Controller → Service → Data)
@@ -118,11 +125,13 @@ npm run dev
 ## 🗃️ База данных
 
 ### Схема
+
 - `users` - пользователи
 - `movies` - фильмы
 - `favorites` - избранные фильмы (many-to-many)
 
 ### Ключевые особенности
+
 - CASCADE удаление
 - Оптимизированные индексы
 - Параметризованные запросы
@@ -165,23 +174,27 @@ MoviesApp/
 ### Environment Variables
 
 #### Server
+
 - `PORT` - порт сервера (default: 5000)
 - `NODE_ENV` - окружение (development/production)
 - `DATABASE_URL` - строка подключения к БД
 - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` - параметры БД
 
 #### Client
+
 - `VITE_API_URL` - URL API сервера
 - `VITE_SERVER_URL` - URL сервера
 
 ## 🚨 Troubleshooting
 
 ### Проблемы с деплоем
+
 1. **Build fails**: Проверьте что все зависимости указаны в package.json
 2. **Database connection**: Убедитесь что DATABASE_URL корректный
 3. **CORS errors**: Проверьте что API URL правильно настроен в frontend
 
 ### Локальные проблемы
+
 1. **Port conflicts**: Измените порт в .env файле
 2. **Database issues**: Убедитесь что PostgreSQL запущен локально
 

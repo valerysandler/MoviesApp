@@ -4,16 +4,17 @@ databases:
     user: moviesapp_user
 
 services:
-  # Backend API Service
   - type: web
-    name: moviesapp-api
+    name: my-app
     env: node
+    buildCommand: npm install
+    startCommand: npm start
     plan: free
-    buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm start
+    branch: main
     envVars:
       - key: NODE_ENV
         value: production
+
       - key: PORT
         value: 5000
       - key: DATABASE_URL
