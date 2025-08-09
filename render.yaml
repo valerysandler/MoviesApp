@@ -2,17 +2,15 @@ databases:
   - name: moviesapp-db
     databaseName: moviesapp
     user: moviesapp_user
-    region: oregon
 
 services:
   # Backend API Service
   - type: web
     name: moviesapp-api
-    runtime: node
+    env: node
     plan: free
     buildCommand: cd server && npm install && npm run build
     startCommand: cd server && npm start
-    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,31 +20,12 @@ services:
         fromDatabase:
           name: moviesapp-db
           property: connectionString
-      - key: DB_HOST
-        fromDatabase:
-          name: moviesapp-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: moviesapp-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: moviesapp-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: moviesapp-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: moviesapp-db
-          property: password
 
   # Frontend Static Site
   - type: web
     name: moviesapp-frontend
-    runtime: static
+    env: static
+    plan: free
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
     envVars:
@@ -54,7 +33,3 @@ services:
         value: https://moviesapp-api.onrender.com
       - key: VITE_SERVER_URL
         value: https://moviesapp-api.onrender.com
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
