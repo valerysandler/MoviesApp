@@ -12,10 +12,10 @@ export const useAuthAction = () => {
 
     const executeWithAuth = useCallback(async (action: () => void) => {
         if (isAuthenticated && user) {
-            // Пользователь уже аутентифицирован, выполняем действие
+            // User is authenticated, execute the action immediately
             action();
         } else {
-            // Нужна аутентификация, сохраняем действие и показываем модаль
+            // Authentication is required, save the action and show the modal
             setPendingAction(() => action);
             setShowModal(true);
         }
@@ -24,12 +24,10 @@ export const useAuthAction = () => {
     const handleUserSubmit = async (username: string) => {
         try {
             await dispatch(fetchOrCreateUser(username)).unwrap();
-
-            // Ждем 2 секунды, затем закрываем модалку и выполняем действие
+            // Wait for 2 seconds, then close the modal and execute the action
             setTimeout(() => {
                 setShowModal(false);
-
-                // Выполняем отложенное действие после успешной аутентификации
+                // Execute the delayed action after successful authentication
                 if (pendingAction) {
                     pendingAction();
                     setPendingAction(null);
@@ -38,7 +36,7 @@ export const useAuthAction = () => {
 
         } catch (error) {
             console.error('Failed to authenticate user:', error);
-            // Модаль остается открытым при ошибке
+            // Modal remains open on error
         }
     };
 

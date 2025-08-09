@@ -8,3 +8,6 @@ export * from './useDebounce';
 export * from './useFavorites';
 export * from './useUser';
 export * from './useAuthAction';
+export * from './useMovieSearch';
+export * from './useMovieOperations';
+export * from './useMovieFiltering';

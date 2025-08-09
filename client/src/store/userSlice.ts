@@ -1,25 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { User, UserState } from './types';
+import axios from 'axios';
 
 // Async thunk для создания/получения пользователя
 export const fetchOrCreateUser = createAsyncThunk(
     'user/fetchOrCreate',
     async (username: string) => {
-        const response = await fetch('http://localhost:3000/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: username.trim() })
+        const response = await axios.post('http://localhost:3000/api/users', {
+            username: username.trim()
         });
-        console.log('Response from fetchOrCreateUser:', response);
-        if (!response.ok) {
+        if (response.status !== 200) {
             throw new Error('Failed to create/fetch user');
         }
-
-        const data = await response.json();
-        return data;
+        return response.data;
     }
 );
 

@@ -7,7 +7,7 @@ export const useUser = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { user, isAuthenticated, loading, error, successMessage } = useSelector((state: RootState) => state.user);
 
-    // Загружаем пользователя из localStorage при инициализации
+    // Load user from localStorage on initial render if not authenticated
     useEffect(() => {
         if (!isAuthenticated) {
             const savedUser = localStorage.getItem('user');
