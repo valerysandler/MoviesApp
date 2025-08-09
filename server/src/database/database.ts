@@ -30,12 +30,12 @@ if (process.env.NODE_ENV === 'production') {
 
 export const pool = new Pool(
   connectionString
-    ? { 
-        connectionString, 
-        ssl: process.env.NODE_ENV === 'production' 
-          ? { rejectUnauthorized: false } 
-          : false 
-      }
+    ? {
+      connectionString,
+      ssl: process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false
+    }
     : dbConfig
 );
 
