@@ -29,7 +29,7 @@ export const addToFavorites = async (movie: Movie) => {
 };
 
 export const removeFromFavorites = async (movieId: number) => {
-  const res = await apiFetch(`/api/movies/favorites/${movieId}`, {
+  const res = await fetch(`/api/movies/favorites/${movieId}`, {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to remove movie from favorites');
@@ -50,7 +50,7 @@ export const addMovieWithImage = async (movie: Omit<Movie, 'id'>, imageFile: Fil
   // Добавляем файл изображения
   formData.append('poster', imageFile);
 
-  const res = await apiFetch('/api/movies', {
+  const res = await fetch('/api/movies', {
     method: 'POST',
     body: formData, // Не устанавливаем Content-Type, браузер сам установит для multipart/form-data
   });
@@ -65,7 +65,7 @@ export const addMovieWithImage = async (movie: Omit<Movie, 'id'>, imageFile: Fil
 
 // Add movie without image (for search results)
 export const addMovieToDatabase = async (movie: Omit<Movie, 'id'>, user_id: string): Promise<Movie> => {
-  const res = await apiFetch('/api/movies', {
+  const res = await fetch('/api/movies', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export const addMovieToDatabase = async (movie: Omit<Movie, 'id'>, user_id: stri
 
 // Check if movie with title already exists
 export const checkMovieExists = async (title: string): Promise<boolean> => {
-  const res = await apiFetch(`/api/movies/check-exists?title=${encodeURIComponent(title)}`);
+  const res = await fetch(`/api/movies/check-exists?title=${encodeURIComponent(title)}`);
   if (!res.ok) throw new Error('Failed to check movie existence');
   const data = await res.json();
   return data.exists;
@@ -94,7 +94,7 @@ export const checkMovieExists = async (title: string): Promise<boolean> => {
 
 // Update movie without image
 export const updateMovie = async (movie: Movie): Promise<Movie> => {
-  const res = await apiFetch(`/api/movies/${movie.id}`, {
+  const res = await fetch(`/api/movies/${movie.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ export const updateMovieWithImage = async (movie: Movie, imageFile: File): Promi
   // Добавляем файл постера
   formData.append('poster', imageFile);
 
-  const res = await apiFetch(`/api/movies/${movie.id}`, {
+  const res = await fetch(`/api/movies/${movie.id}`, {
     method: 'PUT',
     body: formData, // Не устанавливаем Content-Type, браузер сам установит для multipart/form-data
   });
@@ -140,7 +140,7 @@ export const updateMovieWithImage = async (movie: Movie, imageFile: File): Promi
 
 // Delete movie
 export const deleteMovie = async (movieId: number): Promise<void> => {
-  const res = await apiFetch(`/api/movies/${movieId}`, {
+  const res = await fetch(`/api/movies/${movieId}`, {
     method: 'DELETE',
   });
 
@@ -152,7 +152,7 @@ export const deleteMovie = async (movieId: number): Promise<void> => {
 
 // Get movie by ID
 export const getMovieById = async (movieId: number): Promise<Movie> => {
-  const res = await apiFetch(`/api/movies/${movieId}`);
+  const res = await fetch(`/api/movies/${movieId}`);
 
   if (!res.ok) {
     const errorData = await res.text();
@@ -164,7 +164,7 @@ export const getMovieById = async (movieId: number): Promise<Movie> => {
 
 // Check if movie is in favorites for a user
 export const checkFavoriteStatus = async (movieId: number, userId: string): Promise<boolean> => {
-  const res = await apiFetch(`/api/movies/favorites/check?movieId=${movieId}&userId=${userId}`);
+  const res = await fetch(`/api/movies/favorites/check?movieId=${movieId}&userId=${userId}`);
 
   if (!res.ok) {
     const errorData = await res.text();
@@ -197,7 +197,7 @@ export const getMoviesWithFavoriteStatus = async (userId: string): Promise<Movie
 
 // Toggle favorite status for a movie
 export const toggleFavorite = async (movieId: number, userId: string): Promise<boolean> => {
-  const res = await apiFetch('/api/movies/favorites/toggle', {
+  const res = await fetch('/api/movies/favorites/toggle', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
