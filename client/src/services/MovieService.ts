@@ -85,8 +85,13 @@ export const addMovieToDatabase = async (movie: Omit<Movie, 'id'>, user_id: stri
 };
 
 // Check if movie with title already exists
-export const checkMovieExists = async (title: string): Promise<boolean> => {
-  const res = await apiFetch(`/api/movies/check-exists?title=${encodeURIComponent(title)}`);
+export const checkMovieExists = async (title: string, userId?: string): Promise<boolean> => {
+  const params = new URLSearchParams({ title });
+  if (userId) {
+    params.append('userId', userId);
+  }
+
+  const res = await apiFetch(`/api/movies/check-exists?${params.toString()}`);
   if (!res.ok) throw new Error('Failed to check movie existence');
   const data = await res.json();
   return data.exists;

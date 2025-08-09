@@ -24,16 +24,13 @@ export const useAuthAction = () => {
     const handleUserSubmit = async (username: string) => {
         try {
             await dispatch(fetchOrCreateUser(username)).unwrap();
-            // Wait for 2 seconds, then close the modal and execute the action
-            setTimeout(() => {
-                setShowModal(false);
-                // Execute the delayed action after successful authentication
-                if (pendingAction) {
-                    pendingAction();
-                    setPendingAction(null);
-                }
-            }, 2000);
-
+            // Close modal immediately after successful authentication
+            setShowModal(false);
+            // Execute the delayed action after successful authentication
+            if (pendingAction) {
+                pendingAction();
+                setPendingAction(null);
+            }
         } catch (error) {
             console.error('Failed to authenticate user:', error);
             // Modal remains open on error

@@ -179,14 +179,15 @@ export async function deleteMovieController(req: Request, res: Response): Promis
 // Check if movie exists by title
 export async function checkMovieExistsController(req: Request, res: Response): Promise<void> {
     try {
-        const { title } = req.query;
+        const { title, userId } = req.query;
 
         if (!title || typeof title !== 'string') {
             res.status(400).json({ error: 'Title is required and must be a string' });
             return;
         }
 
-        const exists = await checkMovieExists(title);
+        const userIdNumber = userId ? Number(userId) : undefined;
+        const exists = await checkMovieExists(title, userIdNumber);
         res.status(200).json({ exists });
     } catch (error) {
         console.error('Error checking movie existence:', error);

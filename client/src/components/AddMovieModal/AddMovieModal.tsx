@@ -47,7 +47,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
 
     try {
       // Проверка на дублирование в базе данных
-      const exists = await checkMovieExists(data.title);
+      const exists = await checkMovieExists(data.title, userId?.toString());
       if (exists) {
         setCustomError("A movie with the same name already exists.");
         setIsLoading(false);
@@ -68,6 +68,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
       };
 
       onSubmit(movieData, posterFile);
+      setIsLoading(false);
       reset();
       setPosterFile(null);
       setPreviewUrl(null);

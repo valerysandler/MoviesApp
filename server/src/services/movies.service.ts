@@ -134,12 +134,23 @@ export async function deleteMovieFromDatabase(id: number): Promise<boolean> {
 }
 
 // Check if movie with title already exists
-export async function checkMovieExists(title: string): Promise<boolean> {
+// Check if movie with title already exists for a specific user
+export async function checkMovieExists(title: string, userId?: number): Promise<boolean> {
     try {
-        const result = await pool.query(
-            'SELECT id FROM movies WHERE LOWER(title) = LOWER($1)',
-            [title.trim()]
-        );
+        let query: string;
+        let params: any[];
+
+        if (userId) {
+            // Check for specific user
+            query = 'SELECT id FROM movies WHERE LOWER(title) = LOWER($1) AND user_id = $2';
+            params = [title.trim(), userId];
+        } else {
+            // Check globally (for backward compatibility)
+            query = 'SELECT id FROM movies WHERE LOWER(title) = LOWER($1)';
+            params = [title.trim()];
+        }
+
+        const result = await pool.query(query, params);
         return result.rows.length > 0;
     } catch (error) {
         console.error('Error checking movie existence:', error);
