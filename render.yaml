@@ -19,3 +19,16 @@ services:
         fromDatabase:
           name: dpg-d2bl2e7diees73es4kjg-a-db
           property: connectionString
+
+  # Frontend Service (React Static Site)
+  - type: web
+    name: moviesapp-frontend
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
+    branch: main
+    envVars:
+      - key: VITE_API_URL
+        value: https://moviesapp-3.onrender.com
+      - key: REACT_APP_API_URL
+        value: https://moviesapp-3.onrender.com

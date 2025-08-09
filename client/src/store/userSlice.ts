@@ -2,12 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { User, UserState } from './types';
 import axios from 'axios';
+import { buildApiUrl } from '../utils/api';
 
 // Async thunk для создания/получения пользователя
 export const fetchOrCreateUser = createAsyncThunk(
     'user/fetchOrCreate',
     async (username: string) => {
-        const response = await axios.post('http://localhost:3000/api/users', {
+        const response = await axios.post(buildApiUrl('/api/users'), {
             username: username.trim()
         });
         if (response.status !== 200) {
