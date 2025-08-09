@@ -14,6 +14,5 @@ export const buildApiUrl = (endpoint: string): string => {
  */
 export const apiFetch = async (endpoint: string, options?: RequestInit): Promise<Response> => {
     const url = buildApiUrl(endpoint);
-    console.log('API Request:', url);
     return fetch(url, options);
 };

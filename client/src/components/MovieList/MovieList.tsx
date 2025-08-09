@@ -40,7 +40,6 @@ const MovieList: React.FC<MovieListProps> = ({
           movieId: movie.id,
           userId: String(user.id)
         })).unwrap();
-        console.log('Favorite status updated successfully');
       } catch (err) {
         console.error('Error toggling favorite:', err);
         

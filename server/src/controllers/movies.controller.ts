@@ -17,7 +17,6 @@ import { getUserIdByUsername } from "../services/user.service";
 export async function searchMoviesController(req: Request, res: Response): Promise<Movie[] | void> {
     // Support both query parameter (?title=batman) and path parameter (/search/batman)
     const title = req.query.title as string || req.params.title as string;
-    console.log('getMoviesController called with title:', title);
     if (!title || typeof title !== 'string') {
         res.status(400).json({ error: 'Title is required and must be a string' });
         return;

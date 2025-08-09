@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { setSearchResults, clearSearch } from '../store/moviesSlice';
-import { searchMovies } from '../services/MovieService';
+import { searchMovies } from '../services/movieService';
 import { useNotification } from './useNotification';
 
 /**

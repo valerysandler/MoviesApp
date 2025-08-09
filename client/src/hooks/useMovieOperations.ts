@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { fetchMoviesAsync, addMovieToDatabaseAsync } from '../store/moviesSlice';
-import { addMovieWithImage } from '../services/MovieService';
+import { addMovieWithImage } from '../services/movieService';
 import { useUser } from './useUser';
 import { useNotification } from './useNotification';
 import type { Movie } from '../types';
@@ -28,7 +28,6 @@ export const useMovieOperations = () => {
                 await addMovieWithImage(newMovie, posterFile, user.id.toString());
                 showSuccess(`🎬 "${newMovie.title}" has been added successfully!`);
             } else {
-                console.log('Adding movie without file:', newMovie);
                 showError('Please select a poster image');
                 return;
             }
