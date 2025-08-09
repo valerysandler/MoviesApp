@@ -1,27 +1,17 @@
-# Exported from Render on 2025-08-09T12:11:19Z
 services:
   - type: web
     name: moviesapp-backend
-    runtime: node
-    repo: https://github.com/valerysandler/MoviesApp
-    plan: free
-    envVars:
-      - key: OMDB_API_KEY
-        sync: false
-      - key: DB_PORT
-        sync: false
-      - key: DB_NAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_USER
-        sync: false
-      - key: DB_HOST
-        sync: false
-      - key: PORT
-        sync: false
-    region: oregon
-    buildCommand: npm install && npm run build
+    env: node
+    buildCommand: npm install && npm run build # Убедись, что команда для сборки указана
     startCommand: npm start
-    autoDeployTrigger: commit
-version: "1"
+    plan: free
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+      - key: VITE_API_URL
+        value: https://moviesapp-api.onrender.com
+        fromDatabase:
+          name: moviesapp-db
+          property: connectionString
