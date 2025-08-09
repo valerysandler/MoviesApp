@@ -8,8 +8,8 @@ services:
   - type: web
     name: my-backend
     env: node
-    buildCommand: cd server && npm install && npm run build  # Путь для серверной части
-    startCommand: cd server && npm start  # Запуск сервера из папки server
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
     plan: free
     branch: main
     envVars:
@@ -17,16 +17,5 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: dpg-d2bl2e7diees73es4kjg-a-db  # Указываем правильное имя базы данных
+          name: dpg-d2bl2e7diees73es4kjg-a-db
           property: connectionString
-
-  # Frontend Service (React)
-  - type: web
-    name: my-frontend
-    env: static
-    plan: free
-    buildCommand: cd client && npm install && npm run build  # Путь для фронтенда
-    staticPublishPath: client/build  # Публикация фронтенда из папки build
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://my-backend.onrender.com  # URL бэкенда
