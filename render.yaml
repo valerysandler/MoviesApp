@@ -6,7 +6,7 @@ databases:
 services:
   # Backend API Service
   - type: web
-    name: moviesapp-api
+    name: MoviesApp1
     env: node
     buildCommand: cd server && npm install && npm run build
     startCommand: cd server && npm start
