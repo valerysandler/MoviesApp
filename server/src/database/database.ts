@@ -14,7 +14,14 @@ const dbConfig = {
 };
 
 // Alternative: Use DATABASE_URL if provided (common on Render)
-const connectionString = process.env.DATABASE_URL;
+let connectionString = process.env.DATABASE_URL;
+
+// Force SSL for Render if DATABASE_URL doesn't include sslmode
+if (connectionString && process.env.NODE_ENV === 'production') {
+  if (!connectionString.includes('sslmode=')) {
+    connectionString += connectionString.includes('?') ? '&sslmode=require' : '?sslmode=require';
+  }
+}
 
 // Debug logging for production
 if (process.env.NODE_ENV === 'production') {
@@ -32,9 +39,9 @@ export const pool = new Pool(
   connectionString
     ? {
       connectionString,
-      ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }
-        : false
+      ssl: {
+        rejectUnauthorized: false
+      }
     }
     : dbConfig
 );
