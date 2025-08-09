@@ -8,8 +8,8 @@ services:
   - type: web
     name: my-backend
     env: node
-    buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm start
+    buildCommand: cd server && npm install && npm run build  # Путь для серверной части
+    startCommand: cd server && npm start  # Запуск сервера из папки server
     plan: free
     branch: main
     envVars:
@@ -18,24 +18,15 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: moviesapp-db
-          property: internalConnectionString
-      - key: DB_HOST
-        fromDatabase:
-          name: moviesapp-db
-          property: host
-      - key: DB_USER
-        fromDatabase:
-          name: moviesapp-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: moviesapp-db
-          property: password
-      - key: DB_NAME
-        fromDatabase:
-          name: moviesapp-db
-          property: database
-      - key: DB_PORT
-        fromDatabase:
-          name: moviesapp-db
-          property: port
+          property: connectionString
+
+  # Frontend Service (React)
+  - type: web
+    name: my-frontend
+    env: static
+    plan: free
+    buildCommand: cd client && npm install && npm run build  # Путь для фронтенда
+    staticPublishPath: client/build  # Публикация фронтенда из папки build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://my-backend.onrender.com  # URL бэкенда
