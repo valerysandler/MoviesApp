@@ -8,8 +8,8 @@ services:
   - type: web
     name: my-backend
     env: node
-    buildCommand: npm install && npm run build  # Убедись, что правильная команда
-    startCommand: npm start  # Команда для запуска сервера
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
     plan: free
     branch: main
     envVars:
@@ -24,9 +24,9 @@ services:
   - type: web
     name: my-frontend
     env: static
-    plan: free
-    buildCommand: cd client && npm install && npm run build  # Убедись, что команда для фронтенда правильная
-    staticPublishPath: client/build  # Путь к собранному фронтенду
+    plan: starter
+    buildCommand: cd client && npm install && npm run build # Для фронтенда
+    staticPublishPath: client/dist # Путь к собранному фронтенду
     envVars:
       - key: REACT_APP_API_URL
         value: https://my-backend.onrender.com
