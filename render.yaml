@@ -21,10 +21,8 @@ services:
           property: connectionString
 
   # Frontend Service (React)
-  - type: web
+  - type: static
     name: my-frontend
-    env: static
-    plan: starter
     buildCommand: cd client && npm install && npm run build # Для фронтенда
     staticPublishPath: client/dist # Путь к собранному фронтенду
     envVars:
