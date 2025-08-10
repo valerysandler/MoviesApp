@@ -16,6 +16,7 @@ export async function createUserController(req: Request, res: Response): Promise
             message: isNew ? 'User created successfully' : 'User already exists'
         });
     } catch (error: any) {
+        console.error('Error creating user:', error);
         res.status(500).json({ error: error.message });
     }
 }

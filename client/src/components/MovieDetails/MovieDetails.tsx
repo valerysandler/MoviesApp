@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './MovieDetails.module.scss';
-import type { Movie } from '../../types';
+import type { Movie } from '../../models/MovieModel';
 import { getPosterUrl } from '../../utils/imageUtils';
+import { fetchMovies, toggleFavorite } from '../../services/MovieService';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import EditMovieModal from '../EditMovieModal/EditMovieModal';
 import DeleteConfirmModal from '../DeleteConfirmModal/DeleteConfirmModal';
-import { deleteMovie, fetchMovies, toggleFavorite } from '../../services/movieService';
+import { deleteMovie } from '../../services/MovieService';
 
 const MovieDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,12 +31,12 @@ const MovieDetails: React.FC = () => {
   useEffect(() => {
     const loadMovie = async () => {
       if (!id) return;
-
+      
       try {
         setLoading(true);
         const movies = await fetchMovies();
         const foundMovie = movies.find((m: Movie) => m.id === parseInt(id));
-
+        
         if (foundMovie) {
           setMovie(foundMovie);
         } else {
@@ -154,7 +155,7 @@ const MovieDetails: React.FC = () => {
 
           <div className={styles.detailsSection}>
             <h1 className={styles.title}>{movie.title}</h1>
-
+            
             <div className={styles.metadata}>
               <span className={styles.year}>{movie.year}</span>
               <span className={styles.runtime}>{movie.runtime}</span>

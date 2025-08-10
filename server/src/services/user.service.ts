@@ -7,6 +7,7 @@ export async function findUserByUsername(username: string): Promise<User | null>
         const res = await pool.query('SELECT * FROM public.users WHERE username = $1', [username]);
         return res.rows[0] || null;
     } catch (error) {
+        console.error('Query error:', error);
         throw error;
     }
 }

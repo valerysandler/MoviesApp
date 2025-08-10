@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './SearchBar.module.scss';
-import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaTimes } from 'react-icons/fa'; // ← добавили FaTimes
 
 interface SearchBarProps {
   onSearch: (searchTerm: string) => void;

@@ -7,7 +7,6 @@ import EditMovieModal from '../EditMovieModal/EditMovieModal';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import DeleteConfirmModal from '../DeleteConfirmModal/DeleteConfirmModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
-import { useNotification } from '../../hooks/useNotification';
 import { deleteMovie } from '../../services/movieService';
 
 interface MovieCardProps {
@@ -17,8 +16,6 @@ interface MovieCardProps {
     onMovieDeleted?: (movieId: number) => void;
     onAddToDatabase?: (movie: Movie) => void;
     isFromDatabase?: boolean;
-    isMovieAdded?: boolean;
-    isAddingToDatabase?: boolean;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -27,9 +24,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     onMovieUpdated,
     onMovieDeleted,
     onAddToDatabase,
-    isFromDatabase = true,
-    isMovieAdded = false,
-    isAddingToDatabase = false
+    isFromDatabase = true
 }) => {
     const navigate = useNavigate();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -43,8 +38,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
         handleModalClose
     } = useAuthAction();
 
-    const { showError } = useNotification();
-
     const handleMovieClick = () => {
         if (isFromDatabase && movie.id) {
             navigate(`/movie/${movie.id}`);
@@ -52,16 +45,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleFavoriteClick = (event: React.MouseEvent) => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (!isFromDatabase) return;
-
-        onFavoriteClick(movie);
+        event.stopPropagation(); // Предотвращаем всплытие события
+        if (isFromDatabase) {
+            onFavoriteClick(movie);
+        }
     };
 
     const handleEditClick = (event: React.MouseEvent) => {
-        event.stopPropagation();
+        event.stopPropagation(); // Предотвращаем всплытие события
         executeWithAuth(() => {
             setIsEditModalOpen(true);
         });
@@ -79,7 +70,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleDeleteClick = (event: React.MouseEvent) => {
-        event.stopPropagation();
+        event.stopPropagation(); // Предотвращаем всплытие события
         executeWithAuth(() => {
             setIsDeleteConfirmOpen(true);
         });
@@ -96,7 +87,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 onMovieDeleted(movie.id);
             }
         } catch (error) {
-            showError('Failed to delete movie. Please try again.');
+            console.error('Error deleting movie:', error);
+            alert('Failed to delete movie. Please try again.');
         } finally {
             setIsDeleting(false);
         }
@@ -107,14 +99,12 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleAddToDatabase = (event: React.MouseEvent) => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (isMovieAdded || !onAddToDatabase) return;
-
-        executeWithAuth(() => {
-            onAddToDatabase(movie);
-        });
+        event.stopPropagation(); // Предотвращаем всплытие события
+        if (onAddToDatabase) {
+            executeWithAuth(() => {
+                onAddToDatabase(movie);
+            });
+        }
     };
 
     return (
@@ -150,17 +140,12 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 ) : (
                     <div className={styles.actions}>
                         <button
-                            className={`${styles.actionButton} ${isMovieAdded ? styles.addedButton : styles.addButton}`}
+                            className={`${styles.actionButton} ${styles.addButton}`}
                             onClick={handleAddToDatabase}
-                            aria-label={isMovieAdded ? "Already added" : isAddingToDatabase ? "Adding..." : "Add to database"}
-                            title={isMovieAdded ? "Already in your collection" : isAddingToDatabase ? "Adding to collection..." : "Add to my movies"}
-                            disabled={isMovieAdded || isAddingToDatabase}
-                            style={{
-                                pointerEvents: (isMovieAdded || isAddingToDatabase) ? 'none' : 'auto',
-                                opacity: isAddingToDatabase ? 0.7 : 1
-                            }}
+                            aria-label="Add to database"
+                            title="Add to my movies"
                         >
-                            {isMovieAdded ? '✓' : isAddingToDatabase ? '⏳' : '＋'}
+                            ＋
                         </button>
                     </div>
                 )}

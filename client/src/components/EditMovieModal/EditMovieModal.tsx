@@ -3,9 +3,7 @@ import { useForm } from "react-hook-form";
 import styles from "./EditMovieModal.module.scss";
 import type { Movie } from "../../types";
 import { getPosterUrl } from "../../utils/imageUtils";
-import { movieValidationRules } from "../../utils/formValidation";
-import { useNotification } from "../../hooks/useNotification";
-import { updateMovie, updateMovieWithImage } from "../../services/movieService";
+import { updateMovie, updateMovieWithImage } from "../../services/MovieService";
 
 type EditMovieModalProps = {
     isOpen: boolean;
@@ -19,8 +17,6 @@ const EditMovieModal: React.FC<EditMovieModalProps> = ({ isOpen, movie, onClose,
     const [customError, setCustomError] = useState<string | null>(null);
     const [posterFile, setPosterFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const { showSuccess, showError } = useNotification();
 
     const {
         register,
@@ -84,13 +80,10 @@ const EditMovieModal: React.FC<EditMovieModalProps> = ({ isOpen, movie, onClose,
             }
 
             onSubmit(updatedMovie);
-            showSuccess(`✏️ "${updatedMovie.title}" updated successfully!`);
             handleClose();
         } catch (error) {
             console.error('Error updating movie:', error);
-            const errorMessage = "Failed to update movie. Please try again.";
-            setCustomError(errorMessage);
-            showError(errorMessage);
+            setCustomError("Failed to update movie. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -107,35 +100,62 @@ const EditMovieModal: React.FC<EditMovieModalProps> = ({ isOpen, movie, onClose,
                     <input
                         type="text"
                         placeholder="Title"
-                        {...register("title", movieValidationRules.title)}
+                        {...register("title", {
+                            required: "Title is required",
+                            minLength: { value: 3, message: "Title must be at least 3 characters" },
+                            maxLength: { value: 100, message: "Title must be less than 100 characters" }
+                        })}
                     />
                     {errors.title && <p className={styles.error}>{errors.title.message}</p>}
 
                     <input
                         type="text"
                         placeholder="Year (e.g., 2023)"
-                        {...register("year", movieValidationRules.year)}
+                        {...register("year", {
+                            required: "Year is required",
+                            pattern: { value: /^\d{4}$/, message: "Year must be a valid 4-digit number" },
+                            validate: {
+                                validRange: (value) => {
+                                    if (!value) return true;
+                                    const year = parseInt(value);
+                                    const currentYear = new Date().getFullYear();
+                                    return (year >= 1900 && year <= currentYear + 5) || "Year must be between 1900 and " + (currentYear + 5);
+                                }
+                            }
+                        })}
                     />
                     {errors.year && <p className={styles.error}>{errors.year.message}</p>}
 
                     <input
                         type="text"
                         placeholder="Genre (e.g., Action, Drama, Sci-Fi)"
-                        {...register("genre", movieValidationRules.genre)}
+                        {...register("genre", {
+                            required: "Genre is required",
+                            minLength: { value: 3, message: "Genre must be at least 3 characters" },
+                            maxLength: { value: 100, message: "Genre must be less than 100 characters" }
+                        })}
                     />
                     {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
 
                     <input
                         type="text"
                         placeholder="Runtime (e.g., 120 min)"
-                        {...register("runtime", movieValidationRules.runtime)}
+                        {...register("runtime", {
+                            required: "Runtime is required",
+                            minLength: { value: 3, message: "Runtime must be at least 3 characters" },
+                            pattern: { value: /^\d+\s*min?$/i, message: "Runtime must be in format '120 min' or '120'" }
+                        })}
                     />
                     {errors.runtime && <p className={styles.error}>{errors.runtime.message}</p>}
 
                     <input
                         type="text"
                         placeholder="Director"
-                        {...register("director", movieValidationRules.director)}
+                        {...register("director", {
+                            required: "Director is required",
+                            minLength: { value: 3, message: "Director name must be at least 3 characters" },
+                            maxLength: { value: 100, message: "Director name must be less than 100 characters" }
+                        })}
                     />
                     {errors.director && <p className={styles.error}>{errors.director.message}</p>}
 

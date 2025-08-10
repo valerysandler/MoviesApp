@@ -4,7 +4,7 @@ import type { User, UserState } from './types';
 import axios from 'axios';
 import { buildApiUrl } from '../utils/api';
 
-// Async thunk to fetch or create a user
+// Async thunk для создания/получения пользователя
 export const fetchOrCreateUser = createAsyncThunk(
     'user/fetchOrCreate',
     async (username: string) => {

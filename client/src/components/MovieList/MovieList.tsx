@@ -5,7 +5,7 @@ import UsernameModal from '../UsernamModal/UsernameModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import type { Movie } from '../../types';
 import { useAppDispatch } from '../../store/hooks';
-import { toggleFavorite, deleteMovie } from '../../store/moviesSlice';
+import { toggleFavoriteAsync } from '../../store/moviesSlice';
 
 interface MovieListProps {
   movies: Movie[];
@@ -13,9 +13,6 @@ interface MovieListProps {
   onMovieUpdated?: (updatedMovie: Movie) => void;
   onMovieDeleted?: (movieId: number) => void;
   onAddToDatabase?: (movie: Movie) => void;
-  onAddToFavorites?: (movie: Movie, isFavorite: boolean) => void;
-  isMovieAdded?: (movieTitle: string) => boolean;
-  isAddingToDatabase?: (movieTitle: string) => boolean;
 }
 
 const MovieList: React.FC<MovieListProps> = ({
@@ -23,10 +20,7 @@ const MovieList: React.FC<MovieListProps> = ({
   isFromDatabase = true,
   onMovieUpdated,
   onMovieDeleted,
-  onAddToDatabase,
-  onAddToFavorites,
-  isMovieAdded,
-  isAddingToDatabase
+  onAddToDatabase
 }) => {
   const dispatch = useAppDispatch();
   const {
@@ -42,17 +36,13 @@ const MovieList: React.FC<MovieListProps> = ({
       if (!user) return;
 
       try {
-        const result = await dispatch(toggleFavorite({
+        await dispatch(toggleFavoriteAsync({
           movieId: movie.id,
           userId: String(user.id)
         })).unwrap();
-
-        // Call the parent callback with notification
-        if (onAddToFavorites) {
-          onAddToFavorites(movie, result.isFavorite);
-        }
       } catch (err) {
-        // Silent error for favorite toggle
+        console.error('Error toggling favorite:', err);
+        
       }
     });
   };
@@ -69,8 +59,6 @@ const MovieList: React.FC<MovieListProps> = ({
             onMovieDeleted={onMovieDeleted}
             onAddToDatabase={onAddToDatabase}
             isFromDatabase={isFromDatabase}
-            isMovieAdded={isMovieAdded ? isMovieAdded(movie.title) : false}
-            isAddingToDatabase={isAddingToDatabase ? isAddingToDatabase(movie.title) : false}
           />
         ))}
       </div>
