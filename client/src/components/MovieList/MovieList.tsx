@@ -46,7 +46,7 @@ const MovieList: React.FC<MovieListProps> = ({
           movieId: movie.id,
           userId: String(user.id)
         })).unwrap();
-        
+
         // Call the parent callback with notification
         if (onAddToFavorites) {
           onAddToFavorites(movie, result.isFavorite);

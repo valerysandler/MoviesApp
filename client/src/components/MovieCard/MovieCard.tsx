@@ -54,9 +54,9 @@ const MovieCard: React.FC<MovieCardProps> = ({
     const handleFavoriteClick = (event: React.MouseEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        
+
         if (!isFromDatabase) return;
-        
+
         onFavoriteClick(movie);
     };
 
@@ -109,9 +109,9 @@ const MovieCard: React.FC<MovieCardProps> = ({
     const handleAddToDatabase = (event: React.MouseEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        
+
         if (isMovieAdded || !onAddToDatabase) return;
-        
+
         executeWithAuth(() => {
             onAddToDatabase(movie);
         });
@@ -155,7 +155,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                             aria-label={isMovieAdded ? "Already added" : isAddingToDatabase ? "Adding..." : "Add to database"}
                             title={isMovieAdded ? "Already in your collection" : isAddingToDatabase ? "Adding to collection..." : "Add to my movies"}
                             disabled={isMovieAdded || isAddingToDatabase}
-                            style={{ 
+                            style={{
                                 pointerEvents: (isMovieAdded || isAddingToDatabase) ? 'none' : 'auto',
                                 opacity: isAddingToDatabase ? 0.7 : 1
                             }}

@@ -91,7 +91,7 @@ const moviesSlice = createSlice({
                 const { movieId, isFavorite } = action.payload;
                 const movie = state.movies.find(m => m.id === movieId);
                 if (movie) movie.is_favorite = isFavorite;
-                
+
                 // Also update the search results if they exist
                 const searchMovie = state.searchResults.find(m => m.id === movieId);
                 if (searchMovie) searchMovie.is_favorite = isFavorite;

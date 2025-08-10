@@ -125,7 +125,7 @@ const Home = () => {
     try {
       // Immediately update UI for better UX
       setAddedMovieTitles(prev => new Set([...prev, movie.title]));
-      
+
       const { id, ...movieData } = movie;
       await addMovieToDatabase(movieData, user.id.toString());
       showSuccess(`🎬 "${movie.title}" added to your collection!`);

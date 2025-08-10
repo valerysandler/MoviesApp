@@ -8,7 +8,7 @@ services:
   - type: web
     name: moviesapp-backend
     env: node
-    buildCommand: cd server && npm install && npm run build
+    buildCommand: cd server && npm install && npm run build && mkdir -p dist/src/database && cp src/database/init.sql dist/src/database/
     startCommand: cd server && npm start
     plan: free
     branch: main
