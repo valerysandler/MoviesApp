@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./AddMovieModal.module.scss";
-import type { Movie } from "../../models/MovieModel";
-import { checkMovieExists } from "../../services/MovieService";
+import type { Movie } from "../../types";
+import { checkMovieExists, addMovieWithImage } from "../../services/movieService";
+import { useAppDispatch } from "../../store/hooks";
+import { fetchMovies } from "../../store/moviesSlice";
+import { useUser } from "../../hooks/useUser";
+import { useNotification } from "../../hooks/useNotification";
+import { movieValidationRules } from "../../utils/formValidation";
 
 type AddMovieModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Movie, posterFile?: File) => void;
-  userId?: number;
+  onMovieAdded?: () => void;
 };
 
-const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit, userId }) => {
+const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onMovieAdded }) => {
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [customError, setCustomError] = useState<string | null>(null);
+
+  const dispatch = useAppDispatch();
+  const { user } = useUser();
+  const { showSuccess, showError } = useNotification();
 
   const {
     register,
@@ -36,6 +44,7 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
   const handleClose = () => {
     reset();
     setPosterFile(null);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setCustomError(null);
     onClose();
@@ -46,37 +55,47 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
     setIsLoading(true);
 
     try {
-      // Проверка на дублирование в базе данных
-      const exists = await checkMovieExists(data.title, userId?.toString());
-      if (exists) {
-        setCustomError("A movie with the same name already exists.");
-        setIsLoading(false);
-        return;
-      }
-
       if (!posterFile) {
         setCustomError("Please select a poster image.");
         setIsLoading(false);
         return;
       }
 
-      // Создаем объект Movie с временным poster URL (будет заменен на сервере)
+      if (!user) {
+        showError('Please login to add movies');
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if movie exists
+      const exists = await checkMovieExists(data.title, user.username);
+      if (exists) {
+        setCustomError("A movie with the same name already exists.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Add movie
       const movieData: Movie = {
         ...data,
-        poster: '', // Будет заполнено на сервере
-        user_id: userId || 0,
+        poster: '',
+        user_id: user.id,
       };
 
-      onSubmit(movieData, posterFile);
-      setIsLoading(false);
-      reset();
-      setPosterFile(null);
-      setPreviewUrl(null);
-      setCustomError(null);
+      await addMovieWithImage(movieData, posterFile, user.id.toString());
+      showSuccess(`🎬 "${data.title}" added!`);
+
+      // Use callback if provided, otherwise fallback to dispatch
+      if (onMovieAdded) {
+        onMovieAdded();
+      } else {
+        dispatch(fetchMovies());
+      }
+
       handleClose();
     } catch (error) {
-      console.error('Error checking movie existence:', error);
-      setCustomError("Failed to check movie. Please try again.");
+      console.error('Error adding movie:', error);
+      showError("Failed to add movie. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -93,61 +112,35 @@ const AddMovieModal: React.FC<AddMovieModalProps> = ({ isOpen, onClose, onSubmit
           <input
             type="text"
             placeholder="Title"
-            {...register("title", {
-              required: "Title is required",
-              maxLength: { value: 100, message: "Title must be less than 100 characters" },
-              minLength: { value: 1, message: "Title cannot be empty" }
-            })}
+            {...register("title", movieValidationRules.title)}
           />
           {errors.title && <p className={styles.error}>{errors.title.message}</p>}
 
           <input
             type="text"
             placeholder="Year (e.g., 2023)"
-            {...register("year", {
-              required: "Year is required",
-              pattern: { value: /^\d{4}$/, message: "Year must be a 4-digit number" },
-              validate: {
-                validRange: (value) => {
-                  if (!value) return true; // Пропускаем, если значение пустое (обработается required)
-                  const year = parseInt(value);
-                  const currentYear = new Date().getFullYear();
-                  return (year >= 1900 && year <= currentYear + 5) || "Year must be between 1900 and " + (currentYear + 5);
-                }
-              }
-            })}
+            {...register("year", movieValidationRules.year)}
           />
           {errors.year && <p className={styles.error}>{errors.year.message}</p>}
 
           <input
             type="text"
             placeholder="Genre (e.g., Action, Drama)"
-            {...register("genre", {
-              required: "Genre is required",
-              minLength: { value: 2, message: "Genre must be at least 2 characters" },
-              maxLength: { value: 50, message: "Genre must be less than 50 characters" }
-            })}
+            {...register("genre", movieValidationRules.genre)}
           />
           {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
 
           <input
             type="text"
             placeholder="Runtime (e.g., 120 min)"
-            {...register("runtime", {
-              required: "Runtime is required",
-              pattern: { value: /^\d+\s*min?$/i, message: "Runtime must be in format '120 min' or '120'" }
-            })}
+            {...register("runtime", movieValidationRules.runtime)}
           />
           {errors.runtime && <p className={styles.error}>{errors.runtime.message}</p>}
 
           <input
             type="text"
             placeholder="Director"
-            {...register("director", {
-              required: "Director is required",
-              minLength: { value: 2, message: "Director name must be at least 2 characters" },
-              maxLength: { value: 100, message: "Director name must be less than 100 characters" }
-            })}
+            {...register("director", movieValidationRules.director)}
           />
           {errors.director && <p className={styles.error}>{errors.director.message}</p>}
 

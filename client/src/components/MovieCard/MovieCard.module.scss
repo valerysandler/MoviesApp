@@ -6,7 +6,6 @@
   border-radius: 8px;
   transition: transform 0.2s ease;
   text-align: center;
-  /* height: 380px;  <- убрать */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -27,8 +26,7 @@
   border: none;
   padding: 0.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s ease,
-    transform 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   width: 36px;
   height: 36px;
   color: white;
@@ -67,6 +65,21 @@
   background-color: rgba(76, 175, 80, 0.9) !important;
   color: white !important;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.5) !important;
+}
+
+.addedButton {
+  background-color: rgba(33, 150, 243, 0.7) !important;
+  color: white !important;
+  font-size: 1.2rem !important;
+  font-weight: bold;
+  cursor: default !important;
+}
+
+.addedButton:hover {
+  background-color: rgba(33, 150, 243, 0.7) !important;
+  color: white !important;
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.5) !important;
+  transform: none !important;
 }
 
 .favoriteButton {

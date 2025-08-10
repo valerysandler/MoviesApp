@@ -15,19 +15,7 @@ function App() {
           <Route path="/movie/:id" element={<MovieDetails />} />
         </Routes>
 
-        {/* Toast Container для уведомлений */}
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+        <ToastContainer />
       </div>
     </Router>
   )

@@ -28,13 +28,11 @@ export async function getMoviesFromDatabase(): Promise<Movie[]> {
 
         return result.rows as Movie[];
     } catch (error) {
-        console.error('Error fetching movies from database:', error);
         throw new Error('Internal server error');
     }
 }
 
 // Add movie to database
-// В movies.service.ts обновить SQL запросы
 export async function addMovieToDatabase(movie: Omit<Movie, 'id'>): Promise<Movie> {
     try {
         const result = await pool.query(`
@@ -50,7 +48,7 @@ export async function addMovieToDatabase(movie: Omit<Movie, 'id'>): Promise<Movi
             movie.year,
             movie.runtime,
             movie.poster,
-            movie.poster_local,  // новое поле
+            movie.poster_local,
             movie.genre,
             movie.director,
             movie.external_id,
@@ -59,7 +57,6 @@ export async function addMovieToDatabase(movie: Omit<Movie, 'id'>): Promise<Movi
 
         return result.rows[0] as Movie;
     } catch (error) {
-        console.error('Error adding movie to database:', error);
         throw new Error('Internal server error');
     }
 }
@@ -85,7 +82,6 @@ export async function getMovieById(id: number): Promise<Movie | null> {
         `, [id]);
         return result.rows[0] as Movie || null;
     } catch (error) {
-        console.error('Error fetching movie by id:', error);
         throw new Error('Internal server error');
     }
 }
@@ -117,7 +113,6 @@ export async function updateMovieFavoriteStatus(id: number, is_favorite: boolean
 
         return result.rows[0] as Movie;
     } catch (error) {
-        console.error('Error updating movie favorite status:', error);
         throw new Error('Internal server error');
     }
 }
@@ -128,7 +123,6 @@ export async function deleteMovieFromDatabase(id: number): Promise<boolean> {
         const result = await pool.query('DELETE FROM movies WHERE id = $1', [id]);
         return result.rowCount !== null && result.rowCount > 0;
     } catch (error) {
-        console.error('Error deleting movie from database:', error);
         throw new Error('Internal server error');
     }
 }
@@ -153,7 +147,6 @@ export async function checkMovieExists(title: string, userId?: number): Promise<
         const result = await pool.query(query, params);
         return result.rows.length > 0;
     } catch (error) {
-        console.error('Error checking movie existence:', error);
         throw new Error('Internal server error');
     }
 }
@@ -161,12 +154,12 @@ export async function checkMovieExists(title: string, userId?: number): Promise<
 // Update movie in database
 export async function updateMovieInDatabase(id: number, movie: Partial<Omit<Movie, 'id'>>): Promise<Movie> {
     try {
-        // Создаем динамический SQL запрос в зависимости от наличия poster_local
+        // Create dynamic SQL query based on poster_local presence
         let updateQuery: string;
         let queryParams: any[];
 
         if (movie.poster_local !== undefined) {
-            // Обновляем с poster_local
+            // Update with poster_local
             updateQuery = `
                 UPDATE movies 
                 SET title = $1, year = $2, runtime = $3, genre = $4, director = $5, poster_local = $6, updated_at = CURRENT_TIMESTAMP
@@ -183,7 +176,7 @@ export async function updateMovieInDatabase(id: number, movie: Partial<Omit<Movi
                 id
             ];
         } else {
-            // Обновляем без poster_local
+            // Update without poster_local
             updateQuery = `
                 UPDATE movies 
                 SET title = $1, year = $2, runtime = $3, genre = $4, director = $5, updated_at = CURRENT_TIMESTAMP
@@ -208,7 +201,6 @@ export async function updateMovieInDatabase(id: number, movie: Partial<Omit<Movi
 
         return result.rows[0] as Movie;
     } catch (error) {
-        console.error('Error updating movie in database:', error);
         throw new Error('Internal server error');
     }
 }
@@ -218,7 +210,7 @@ export async function searchMovies(title: string) {
         params: {
             apikey: OMDB_API_KEY,
             s: title,
-            type: 'movie', // фильтруем по фильмам
+            type: 'movie',
         },
     });
     if (response.data.Response === 'False') {

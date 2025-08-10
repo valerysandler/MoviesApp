@@ -1,86 +1,86 @@
 # Movies App - Deployment Guide
 
-Полнофункциональное приложение для управления фильмами с React TypeScript frontend и Node.js Express backend.
+A full-featured movie management application with React TypeScript frontend and Node.js Express backend.
 
-## 🚀 Деплой на Render
+## 🚀 Deploy to Render
 
-### Предварительные требования
+### Prerequisites
 
-1. Аккаунт на [Render.com](https://render.com)
-2. Репозиторий проекта на GitHub
+1. Account on [Render.com](https://render.com)
+2. Project repository on GitHub
 
-### Шаги деплоя
+### Deployment Steps
 
-#### 1. Подготовка репозитория
+#### 1. Repository Preparation
 
 ```bash
-# Убедитесь, что все файлы закоммичены
+# Make sure all files are committed
 git add .
 git commit -m "Prepare for Render deployment"
 git push origin main
 ```
 
-#### 2. Создание сервисов на Render
+#### 2. Creating Services on Render
 
-1. **Откройте [Render Dashboard](https://dashboard.render.com)**
+1. **Open [Render Dashboard](https://dashboard.render.com)**
 
-2. **Создайте PostgreSQL базу данных:**
+2. **Create PostgreSQL Database:**
 
-   - Нажмите "New +" → "PostgreSQL"
+   - Click "New +" → "PostgreSQL"
    - Name: `moviesapp-db`
    - Database Name: `moviesapp`
    - User: `moviesapp_user`
-   - Region: выберите ближайший
+   - Region: choose the closest one
    - Plan: Free
-   - Нажмите "Create Database"
+   - Click "Create Database"
 
-3. **Создайте Web Service (Backend API):**
+3. **Create Web Service (Backend API):**
 
-   - Нажмите "New +" → "Web Service"
+   - Click "New +" → "Web Service"
    - Connect your GitHub repository
    - Name: `moviesapp-api`
-   - Region: тот же что и для БД
+   - Region: same as database
    - Branch: `main`
-   - Root Directory: оставьте пустым
+   - Root Directory: leave empty
    - Runtime: Node
    - Build Command: `cd server && npm install && npm run build`
    - Start Command: `cd server && npm start`
    - Plan: Free
 
-4. **Настройте Environment Variables для API:**
+4. **Configure Environment Variables for API:**
 
    ```
    NODE_ENV=production
    PORT=5000
-   DATABASE_URL=[скопируйте External Database URL из настроек БД]
+   DATABASE_URL=[copy External Database URL from database settings]
    ```
 
-5. **Создайте Static Site (Frontend):**
+5. **Create Static Site (Frontend):**
 
-   - Нажмите "New +" → "Static Site"
+   - Click "New +" → "Static Site"
    - Connect your GitHub repository
    - Name: `moviesapp-frontend`
    - Branch: `main`
-   - Root Directory: оставьте пустым
+   - Root Directory: leave empty
    - Build Command: `cd client && npm install && npm run build`
    - Publish Directory: `client/dist`
 
-6. **Настройте Environment Variables для Frontend:**
+6. **Configure Environment Variables for Frontend:**
    ```
    VITE_API_URL=https://[your-api-service-url].onrender.com
    VITE_SERVER_URL=https://[your-api-service-url].onrender.com
    ```
 
-#### 3. Автоматический деплой с render.yaml
+#### 3. Automatic Deployment with render.yaml
 
-Альтернативно, вы можете использовать файл `render.yaml` для автоматического деплоя:
+Alternatively, you can use the `render.yaml` file for automatic deployment:
 
-1. Откройте [Render Dashboard](https://dashboard.render.com)
-2. Нажмите "New +" → "Blueprint"
+1. Open [Render Dashboard](https://dashboard.render.com)
+2. Click "New +" → "Blueprint"
 3. Connect your GitHub repository
-4. Render автоматически найдет `render.yaml` и создаст все необходимые сервисы
+4. Render will automatically find `render.yaml` and create all necessary services
 
-### Локальная разработка
+### Local Development
 
 #### Backend (Server)
 
@@ -98,107 +98,107 @@ npm install
 npm run dev
 ```
 
-## 🏗️ Архитектура приложения
+## 🏗️ Application Architecture
 
 ### Frontend (React + TypeScript)
 
-- **React 19** с TypeScript
-- **Redux Toolkit** для управления состоянием
-- **Vite** для сборки
-- **SCSS** для стилизации
-- **Vitest** для тестирования
+- **React 19** with TypeScript
+- **Redux Toolkit** for state management
+- **Vite** for build tooling
+- **SCSS** for styling
+- **Vitest** for testing
 
 ### Backend (Node.js + Express)
 
-- **Express.js** сервер
-- **TypeScript** для типизации
-- **PostgreSQL** база данных
-- **Multer** для загрузки файлов
+- **Express.js** server
+- **TypeScript** for type safety
+- **PostgreSQL** database
+- **Multer** for file uploads
 
-### Архитектурные паттерны
+### Architectural Patterns
 
-- **Custom React Hooks** для переиспользования логики
-- **Redux Slices** для управления состоянием
+- **Custom React Hooks** for logic reuse
+- **Redux Slices** for state management
 - **Layered Architecture** (Controller → Service → Data)
 - **Single Responsibility Principle**
 
-## 🗃️ База данных
+## 🗃️ Database
 
-### Схема
+### Schema
 
-- `users` - пользователи
-- `movies` - фильмы
-- `favorites` - избранные фильмы (many-to-many)
+- `users` - user accounts
+- `movies` - movie records
+- `favorites` - favorite movies (many-to-many)
 
-### Ключевые особенности
+### Key Features
 
-- CASCADE удаление
-- Оптимизированные индексы
-- Параметризованные запросы
+- CASCADE deletion
+- Optimized indexes
+- Parameterized queries
 
-## 🧪 Тестирование
+## 🧪 Testing
 
 ```bash
-# Запуск тестов
+# Run tests
 cd client
 npm test
 
-# Покрытие тестов
+# Test coverage
 npm run test:coverage
 ```
 
-## 📁 Структура проекта
+## 📁 Project Structure
 
 ```
 MoviesApp/
-├── client/                 # React приложение
+├── client/                 # React application
 │   ├── src/
-│   │   ├── components/     # React компоненты
-│   │   ├── hooks/          # Кастомные хуки
+│   │   ├── components/     # React components
+│   │   ├── hooks/          # Custom hooks
 │   │   ├── store/          # Redux store
-│   │   ├── services/       # API сервисы
-│   │   └── types/          # TypeScript типы
-│   └── dist/               # Сборка для production
+│   │   ├── services/       # API services
+│   │   └── types/          # TypeScript types
+│   └── dist/               # Production build
 ├── server/                 # Node.js API
 │   ├── src/
-│   │   ├── controllers/    # Express контроллеры
-│   │   ├── services/       # Бизнес логика
-│   │   ├── routes/         # API роуты
-│   │   └── database/       # БД конфигурация
-│   └── dist/               # Скомпилированный JS
-└── render.yaml             # Конфигурация Render
+│   │   ├── controllers/    # Express controllers
+│   │   ├── services/       # Business logic
+│   │   ├── routes/         # API routes
+│   │   └── database/       # Database configuration
+│   └── dist/               # Compiled JavaScript
+└── render.yaml             # Render configuration
 ```
 
-## 🔧 Конфигурация
+## 🔧 Configuration
 
 ### Environment Variables
 
 #### Server
 
-- `PORT` - порт сервера (default: 5000)
-- `NODE_ENV` - окружение (development/production)
-- `DATABASE_URL` - строка подключения к БД
-- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` - параметры БД
+- `PORT` - server port (default: 5000)
+- `NODE_ENV` - environment (development/production)
+- `DATABASE_URL` - database connection string
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` - database parameters
 
 #### Client
 
-- `VITE_API_URL` - URL API сервера
-- `VITE_SERVER_URL` - URL сервера
+- `VITE_API_URL` - API server URL
+- `VITE_SERVER_URL` - server URL
 
 ## 🚨 Troubleshooting
 
-### Проблемы с деплоем
+### Deployment Issues
 
-1. **Build fails**: Проверьте что все зависимости указаны в package.json
-2. **Database connection**: Убедитесь что DATABASE_URL корректный
-3. **CORS errors**: Проверьте что API URL правильно настроен в frontend
+1. **Build fails**: Check that all dependencies are listed in package.json
+2. **Database connection**: Ensure DATABASE_URL is correct
+3. **CORS errors**: Verify API URL is properly configured in frontend
 
-### Локальные проблемы
+### Local Issues
 
-1. **Port conflicts**: Измените порт в .env файле
-2. **Database issues**: Убедитесь что PostgreSQL запущен локально
+1. **Port conflicts**: Change port in .env file
+2. **Database issues**: Make sure PostgreSQL is running locally
 
-## 📚 Дополнительная информация
+## 📚 Additional Information
 
 - [Render Documentation](https://render.com/docs)
 - [React Documentation](https://react.dev)

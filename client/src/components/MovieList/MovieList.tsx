@@ -5,7 +5,7 @@ import UsernameModal from '../UsernamModal/UsernameModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import type { Movie } from '../../types';
 import { useAppDispatch } from '../../store/hooks';
-import { toggleFavoriteAsync } from '../../store/moviesSlice';
+import { toggleFavorite } from '../../store/moviesSlice';
 
 interface MovieListProps {
   movies: Movie[];
@@ -13,6 +13,7 @@ interface MovieListProps {
   onMovieUpdated?: (updatedMovie: Movie) => void;
   onMovieDeleted?: (movieId: number) => void;
   onAddToDatabase?: (movie: Movie) => void;
+  isMovieAdded?: (movieTitle: string) => boolean;
 }
 
 const MovieList: React.FC<MovieListProps> = ({
@@ -20,7 +21,8 @@ const MovieList: React.FC<MovieListProps> = ({
   isFromDatabase = true,
   onMovieUpdated,
   onMovieDeleted,
-  onAddToDatabase
+  onAddToDatabase,
+  isMovieAdded
 }) => {
   const dispatch = useAppDispatch();
   const {
@@ -36,13 +38,12 @@ const MovieList: React.FC<MovieListProps> = ({
       if (!user) return;
 
       try {
-        await dispatch(toggleFavoriteAsync({
+        await dispatch(toggleFavorite({
           movieId: movie.id,
           userId: String(user.id)
         })).unwrap();
       } catch (err) {
-        console.error('Error toggling favorite:', err);
-        
+        // Silent error for favorite toggle
       }
     });
   };
@@ -59,6 +60,7 @@ const MovieList: React.FC<MovieListProps> = ({
             onMovieDeleted={onMovieDeleted}
             onAddToDatabase={onAddToDatabase}
             isFromDatabase={isFromDatabase}
+            isMovieAdded={isMovieAdded ? isMovieAdded(movie.title) : false}
           />
         ))}
       </div>

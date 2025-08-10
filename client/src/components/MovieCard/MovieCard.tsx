@@ -7,7 +7,7 @@ import EditMovieModal from '../EditMovieModal/EditMovieModal';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import DeleteConfirmModal from '../DeleteConfirmModal/DeleteConfirmModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
-import { deleteMovie } from '../../services/MovieService';
+import { deleteMovie } from '../../services/movieService';
 
 interface MovieCardProps {
     movie: Movie;
@@ -16,6 +16,7 @@ interface MovieCardProps {
     onMovieDeleted?: (movieId: number) => void;
     onAddToDatabase?: (movie: Movie) => void;
     isFromDatabase?: boolean;
+    isMovieAdded?: boolean;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -24,7 +25,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
     onMovieUpdated,
     onMovieDeleted,
     onAddToDatabase,
-    isFromDatabase = true
+    isFromDatabase = true,
+    isMovieAdded = false
 }) => {
     const navigate = useNavigate();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -45,14 +47,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleFavoriteClick = (event: React.MouseEvent) => {
-        event.stopPropagation(); // Предотвращаем всплытие события
+        event.stopPropagation();
         if (isFromDatabase) {
             onFavoriteClick(movie);
         }
     };
 
     const handleEditClick = (event: React.MouseEvent) => {
-        event.stopPropagation(); // Предотвращаем всплытие события
+        event.stopPropagation();
         executeWithAuth(() => {
             setIsEditModalOpen(true);
         });
@@ -70,7 +72,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleDeleteClick = (event: React.MouseEvent) => {
-        event.stopPropagation(); // Предотвращаем всплытие события
+        event.stopPropagation();
         executeWithAuth(() => {
             setIsDeleteConfirmOpen(true);
         });
@@ -87,7 +89,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 onMovieDeleted(movie.id);
             }
         } catch (error) {
-            console.error('Error deleting movie:', error);
             alert('Failed to delete movie. Please try again.');
         } finally {
             setIsDeleting(false);
@@ -99,7 +100,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     };
 
     const handleAddToDatabase = (event: React.MouseEvent) => {
-        event.stopPropagation(); // Предотвращаем всплытие события
+        event.stopPropagation();
         if (onAddToDatabase) {
             executeWithAuth(() => {
                 onAddToDatabase(movie);
@@ -140,12 +141,13 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 ) : (
                     <div className={styles.actions}>
                         <button
-                            className={`${styles.actionButton} ${styles.addButton}`}
-                            onClick={handleAddToDatabase}
-                            aria-label="Add to database"
-                            title="Add to my movies"
+                            className={`${styles.actionButton} ${isMovieAdded ? styles.addedButton : styles.addButton}`}
+                            onClick={isMovieAdded ? undefined : handleAddToDatabase}
+                            aria-label={isMovieAdded ? "Already added" : "Add to database"}
+                            title={isMovieAdded ? "Already in your collection" : "Add to my movies"}
+                            disabled={isMovieAdded}
                         >
-                            ＋
+                            {isMovieAdded ? '✓' : '＋'}
                         </button>
                     </div>
                 )}

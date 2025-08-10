@@ -18,8 +18,7 @@ export async function checkFavoriteStatus(movieId: number, username: string): Pr
     const result = await pool.query(query, [numericUserId, movieId]);
     return result.rows[0].is_favorite;
   } catch (error) {
-    console.error('Error checking favorite status:', error);
-    throw error;
+    throw new Error('Database error');
   }
 }
 
@@ -39,7 +38,6 @@ export async function addToFavorites(movieId: number, username: string): Promise
     const result = await pool.query(query, [numericUserId, movieId]);
     return result.rows[0];
   } catch (error) {
-    console.error('Error adding to favorites:', error);
     throw error;
   }
 }
@@ -57,7 +55,6 @@ export async function removeFromFavorites(movieId: number, username: string): Pr
 
     await pool.query(query, [numericUserId, movieId]);
   } catch (error) {
-    console.error('Error removing from favorites:', error);
     throw error;
   }
 }
@@ -81,7 +78,6 @@ export async function toggleFavorite(movieId: number, username: string): Promise
       return { action: 'added', isInFavorites: true };
     }
   } catch (error) {
-    console.error('Error toggling favorite:', error);
     throw error;
   }
 }
@@ -103,7 +99,6 @@ export async function getUserFavorites(username: string): Promise<any[]> {
     const result = await pool.query(query, [numericUserId]);
     return result.rows;
   } catch (error) {
-    console.error('Error getting user favorites:', error);
     throw error;
   }
 }

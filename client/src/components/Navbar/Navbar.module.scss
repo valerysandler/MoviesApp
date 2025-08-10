@@ -161,7 +161,7 @@
   display: none;
 }
 
-/* Адаптивность */
+/* Responsive design */
 @media (max-width: 968px) {
   .container {
     flex-wrap: wrap;
@@ -234,7 +234,7 @@
   }
 }
 
-/* Анимации загрузки для темной темы */
+/* Loading animations for dark theme */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -250,7 +250,7 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Эффект для мобильного меню */
+/* Mobile menu effect */
 @media (max-width: 768px) {
   .nav {
     animation: fadeInUp 0.4s ease-out 0.2s both;

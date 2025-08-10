@@ -1,7 +1,3 @@
-/**
- * Image utilities for movie posters
- */
-
 import type { Movie } from "../types";
 import { API_CONFIG } from '../config/constants';
 

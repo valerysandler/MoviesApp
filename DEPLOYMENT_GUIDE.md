@@ -1,26 +1,26 @@
-# 🚀 Деплой на Render - Итоговые инструкции
+# 🚀 Deploy to Render - Final Instructions
 
-## ✅ Подготовка завершена!
+## ✅ Preparation Complete!
 
-Ваш проект готов к деплою на Render. Все конфигурационные файлы созданы:
+Your project is ready for deployment to Render. All configuration files have been created:
 
-### Созданные файлы:
+### Created Files:
 
-- ✅ `render.yaml` - автоматическая конфигурация деплоя
-- ✅ `.env.example` - шаблон переменных окружения
-- ✅ `.gitignore` - исключения для Git
-- ✅ `README.md` - полная документация
+- ✅ `render.yaml` - automatic deployment configuration
+- ✅ `.env.example` - environment variables template
+- ✅ `.gitignore` - Git exclusions
+- ✅ `README.md` - complete documentation
 
-### Исправления:
+### Fixes Applied:
 
-- ✅ Обновлена конфигурация базы данных для Render
-- ✅ Настроены переменные окружения
-- ✅ Исправлены скрипты сборки
-- ✅ Исправлены ошибки TypeScript
+- ✅ Updated database configuration for Render
+- ✅ Configured environment variables
+- ✅ Fixed build scripts
+- ✅ Fixed TypeScript errors
 
-## 🎯 Следующие шаги для деплоя:
+## 🎯 Next Steps for Deployment:
 
-### 1. Коммит изменений в GitHub
+### 1. Commit Changes to GitHub
 
 ```bash
 git add .
@@ -28,16 +28,16 @@ git commit -m "Prepare for Render deployment"
 git push origin main
 ```
 
-### 2. Создание сервисов на Render
+### 2. Create Services on Render
 
-#### Вариант А: Автоматический деплой (рекомендуется)
+#### Option A: Automatic Deployment (Recommended)
 
-1. Откройте [Render Dashboard](https://dashboard.render.com)
-2. Нажмите "New +" → "Blueprint"
+1. Open [Render Dashboard](https://dashboard.render.com)
+2. Click "New +" → "Blueprint"
 3. Connect your GitHub repository
-4. Render найдет `render.yaml` и создаст все сервисы автоматически
+4. Render will find `render.yaml` and create all services automatically
 
-#### Вариант Б: Ручное создание
+#### Option B: Manual Creation
 
 1. **PostgreSQL Database**:
 
@@ -54,7 +54,7 @@ git push origin main
      ```
      NODE_ENV=production
      PORT=5000
-     DATABASE_URL=[из настроек БД]
+     DATABASE_URL=[from database settings]
      ```
 
 3. **Frontend (Static Site)**:
@@ -66,59 +66,59 @@ git push origin main
      VITE_API_URL=https://moviesapp-api.onrender.com
      ```
 
-## 🔍 Проверка после деплоя:
+## 🔍 Post-Deployment Verification:
 
-1. **Backend API**: `https://your-api-url.onrender.com/` должен вернуть "API is running"
-2. **Frontend**: Сайт должен загружаться и подключаться к API
-3. **Database**: Проверьте логи API на успешное подключение к БД
+1. **Backend API**: `https://your-api-url.onrender.com/` should return "API is running"
+2. **Frontend**: Site should load and connect to API
+3. **Database**: Check API logs for successful database connection
 
-## 🐛 Возможные проблемы:
+## 🐛 Potential Issues:
 
 ### "Build failed"
 
-- Проверьте логи сборки в Render Dashboard
-- Убедитесь что все зависимости указаны в package.json
+- Check build logs in Render Dashboard
+- Ensure all dependencies are listed in package.json
 
 ### "Database connection error"
 
-- Проверьте переменную DATABASE_URL
-- Убедитесь что БД создана и доступна
+- Verify DATABASE_URL variable
+- Ensure database is created and accessible
 
 ### "CORS errors"
 
-- Проверьте что VITE_API_URL указывает на правильный URL API
+- Check that VITE_API_URL points to correct API URL
 
-## 💡 Полезные команды для отладки:
+## 💡 Useful Debugging Commands:
 
 ```bash
-# Локальная проверка сборки
+# Local build verification
 cd server && npm run build
 cd client && npm run build
 
-# Проверка переменных окружения
+# Check environment variables
 echo $DATABASE_URL
 
-# Тест подключения к БД (локально)
+# Test database connection (locally)
 cd server && npm run init-db
 ```
 
-## 📞 Поддержка:
+## 📞 Support:
 
-Если возникли проблемы:
+If you encounter issues:
 
-1. Проверьте логи в Render Dashboard
-2. Убедитесь что все Environment Variables настроены
-3. Проверьте что репозиторий синхронизирован с GitHub
+1. Check logs in Render Dashboard
+2. Ensure all Environment Variables are configured
+3. Verify repository is synced with GitHub
 
-## 🎉 Поздравляем!
+## 🎉 Congratulations!
 
-После успешного деплоя у вас будет:
+After successful deployment, you'll have:
 
-- ✅ Рабочее приложение в интернете
-- ✅ Автоматические обновления при push в GitHub
-- ✅ Бесплатный PostgreSQL
-- ✅ SSL сертификаты
-- ✅ CDN для статических файлов
+- ✅ Working application online
+- ✅ Automatic updates on GitHub push
+- ✅ Free PostgreSQL database
+- ✅ SSL certificates
+- ✅ CDN for static files
 
-**Ваше приложение будет доступно по адресу:**
+**Your application will be available at:**
 `https://moviesapp-frontend.onrender.com`

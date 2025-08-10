@@ -13,9 +13,7 @@ import {
 } from "../services/movies.service";
 import { getUserIdByUsername } from "../services/user.service";
 
-// Get movies from https://www.omdbapi.com/ AJAX request
 export async function searchMoviesController(req: Request, res: Response): Promise<Movie[] | void> {
-    // Support both query parameter (?title=batman) and path parameter (/search/batman)
     const title = req.query.title as string || req.params.title as string;
     if (!title || typeof title !== 'string') {
         res.status(400).json({ error: 'Title is required and must be a string' });
@@ -34,8 +32,8 @@ export async function searchMoviesController(req: Request, res: Response): Promi
 
         const detailedMovies = await Promise.all(movieDetailsPromises);
         const movies: Movie[] = detailedMovies.map((movie: any) => ({
-            id: Math.floor(Math.random() * 1000), // Mock ID
-            user_id: 0, // Will be set when user saves the movie
+            id: Math.floor(Math.random() * 1000),
+            user_id: 0,
             title: movie.Title,
             year: movie.Year,
             runtime: movie.Runtime,
@@ -48,49 +46,33 @@ export async function searchMoviesController(req: Request, res: Response): Promi
 
         res.status(200).json(movies);
     } catch (error) {
-        console.error('Error fetching movies:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
 
-// Get movies from postgres database 
 export async function getMoviesController(req: Request, res: Response): Promise<Movie[] | void> {
     try {
-        // Here you would typically fetch movies from your database
-        // For now, we return an empty array as a placeholder
         const movies = await getMoviesFromDatabase();
         res.status(200).json(movies);
     } catch (error: any) {
-        console.error('Error fetching movies from database:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Failed to fetch movies' });
     }
 }
 
-// Add movie to database
 export async function addMovieController(req: Request, res: Response): Promise<void> {
     try {
         const movieData: Omit<Movie, 'id'> = req.body;
         const imageFile = req.file;
 
-        // Validate required fields
         if (!movieData.title) {
             res.status(400).json({ error: 'Title is required' });
             return;
         }
 
-        // Определяем user_id - может быть числом или именем пользователя
         let userId: number;
         if (typeof movieData.user_id === 'string' && isNaN(Number(movieData.user_id))) {
-            // Если это строка (имя пользователя), получаем ID
             userId = await getUserIdByUsername(movieData.user_id);
         } else if (movieData.user_id) {
-            // Если это число или строковое число
             userId = Number(movieData.user_id);
         } else {
             res.status(400).json({ error: 'User ID is required' });
@@ -99,181 +81,122 @@ export async function addMovieController(req: Request, res: Response): Promise<v
 
         let posterPath: string | undefined = undefined;
         if (imageFile) {
-            posterPath = `/uploads/posters/${imageFile.filename}`;
+            posterPath = imageFile.path;
         }
 
-        const newMovie = await addMovieToDatabase({
+        const movie: Omit<Movie, 'id'> = {
             ...movieData,
-            poster_local: posterPath,
             user_id: userId,
-            is_favorite: movieData.is_favorite || false
-        });
+            poster_local: posterPath || null
+        };
+
+        const newMovie = await addMovieToDatabase(movie);
         res.status(201).json(newMovie);
     } catch (error) {
-        console.error('Error adding movie to database:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Failed to add movie' });
     }
 }
 
-// Update movie favorite status
 export async function updateMovieFavoriteController(req: Request, res: Response): Promise<void> {
     try {
         const movieId = parseInt(req.params.id);
-        const { is_favorite } = req.body;
+        const { userId } = req.body;
 
-        if (isNaN(movieId)) {
-            res.status(400).json({ error: 'Invalid movie ID' });
+        if (!userId) {
+            res.status(400).json({ error: 'User ID is required' });
             return;
         }
 
-        if (typeof is_favorite !== 'boolean') {
-            res.status(400).json({ error: 'is_favorite must be a boolean' });
-            return;
-        }
-
-        const updatedMovie = await updateMovieFavoriteStatus(movieId, is_favorite);
-        res.status(200).json(updatedMovie);
+        const isFavorite = await updateMovieFavoriteStatus(movieId, userId);
+        res.status(200).json({ isFavorite });
     } catch (error) {
-        console.error('Error updating movie favorite status:', error);
-        if (error instanceof Error && error.message === 'Movie not found') {
-            res.status(404).json({ error: 'Movie not found' });
-        } else {
-            res.status(500).json({
-                error: 'Internal server error',
-                details: error instanceof Error ? error.message : 'Unknown error'
-            });
-        }
+        res.status(500).json({ error: 'Failed to update favorite status' });
     }
 }
 
-// Delete movie from database
 export async function deleteMovieController(req: Request, res: Response): Promise<void> {
     try {
         const movieId = parseInt(req.params.id);
 
-        if (isNaN(movieId)) {
+        if (!movieId || isNaN(movieId)) {
             res.status(400).json({ error: 'Invalid movie ID' });
             return;
         }
 
-        const deleted = await deleteMovieFromDatabase(movieId);
-
-        if (deleted) {
-            res.status(200).json({ message: 'Movie deleted successfully' });
-        } else {
-            res.status(404).json({ error: 'Movie not found' });
-        }
+        await deleteMovieFromDatabase(movieId);
+        res.status(200).json({ message: 'Movie deleted successfully' });
     } catch (error) {
-        console.error('Error deleting movie:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Failed to delete movie' });
     }
 }
 
-// Check if movie exists by title
 export async function checkMovieExistsController(req: Request, res: Response): Promise<void> {
     try {
-        const { title, userId } = req.query;
+        const title = req.query.title as string;
 
-        if (!title || typeof title !== 'string') {
-            res.status(400).json({ error: 'Title is required and must be a string' });
+        if (!title) {
+            res.status(400).json({ error: 'Title is required' });
             return;
         }
 
-        const userIdNumber = userId ? Number(userId) : undefined;
-        const exists = await checkMovieExists(title, userIdNumber);
+        const exists = await checkMovieExists(title);
         res.status(200).json({ exists });
     } catch (error) {
-        console.error('Error checking movie existence:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Failed to check movie existence' });
     }
 }
 
-// Update movie in database
 export async function updateMovieController(req: Request, res: Response): Promise<void> {
     try {
         const movieId = parseInt(req.params.id);
-        const movieData = req.body;
+        const movieData: Partial<Movie> = req.body;
         const imageFile = req.file;
 
-        if (isNaN(movieId)) {
+        if (!movieId || isNaN(movieId)) {
             res.status(400).json({ error: 'Invalid movie ID' });
             return;
         }
 
-        // Validate required fields
-        if (!movieData.title || typeof movieData.title !== 'string') {
-            res.status(400).json({ error: 'Title is required and must be a string' });
+        if (!movieData.title) {
+            res.status(400).json({ error: 'Title is required' });
             return;
         }
 
-        if (!movieData.year || typeof movieData.year !== 'string') {
-            res.status(400).json({ error: 'Year is required and must be a string' });
+        const existingMovie = await getMovieById(movieId);
+        if (!existingMovie) {
+            res.status(404).json({ error: 'Movie not found' });
             return;
         }
 
-        if (!movieData.genre || typeof movieData.genre !== 'string') {
-            res.status(400).json({ error: 'Genre is required and must be a string' });
-            return;
-        }
+        let posterPath: string | null = existingMovie.poster_local;
 
-        if (!movieData.runtime || typeof movieData.runtime !== 'string') {
-            res.status(400).json({ error: 'Runtime is required and must be a string' });
-            return;
-        }
-
-        if (!movieData.director || typeof movieData.director !== 'string') {
-            res.status(400).json({ error: 'Director is required and must be a string' });
-            return;
-        }
-
-        // Обрабатываем новый постер, если он был загружен
-        let posterPath: string | undefined = undefined;
         if (imageFile) {
-            posterPath = `/uploads/posters/${imageFile.filename}`;
+            posterPath = imageFile.path;
         }
 
-        // Если новый постер загружен, добавляем его к данным для обновления
-        const updateData = {
+        const updatedMovieData = {
             ...movieData,
-            ...(posterPath && { poster_local: posterPath })
+            id: movieId,
+            poster_local: posterPath
         };
 
-        const updatedMovie = await updateMovieInDatabase(movieId, updateData);
+        const updatedMovie = await updateMovieInDatabase(updatedMovieData as Movie);
         res.status(200).json(updatedMovie);
     } catch (error) {
-        console.error('Error updating movie:', error);
-        if (error instanceof Error && error.message === 'Movie not found') {
-            res.status(404).json({ error: 'Movie not found' });
-        } else {
-            res.status(500).json({
-                error: 'Internal server error',
-                details: error instanceof Error ? error.message : 'Unknown error'
-            });
-        }
+        res.status(500).json({ error: 'Failed to update movie' });
     }
 }
 
-// Get movie by ID
 export async function getMovieByIdController(req: Request, res: Response): Promise<void> {
     try {
         const movieId = parseInt(req.params.id);
 
-        if (isNaN(movieId)) {
+        if (!movieId || isNaN(movieId)) {
             res.status(400).json({ error: 'Invalid movie ID' });
             return;
         }
 
         const movie = await getMovieById(movieId);
-
         if (!movie) {
             res.status(404).json({ error: 'Movie not found' });
             return;
@@ -281,10 +204,6 @@ export async function getMovieByIdController(req: Request, res: Response): Promi
 
         res.status(200).json(movie);
     } catch (error) {
-        console.error('Error fetching movie by ID:', error);
-        res.status(500).json({
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        });
+        res.status(500).json({ error: 'Failed to fetch movie' });
     }
 }

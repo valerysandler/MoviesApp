@@ -4,8 +4,8 @@ export interface Movie {
   title: string;
   year?: string;
   runtime?: string;
-  poster?: string;         
-  poster_local?: string;   
+  poster?: string;
+  poster_local?: string | null;
   genre?: string;
   director?: string;
   external_id?: string;

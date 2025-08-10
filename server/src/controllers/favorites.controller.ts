@@ -18,7 +18,6 @@ export async function checkFavorite(req: Request, res: Response) {
     const isFavorite = await checkFavoriteStatus(Number(movieId), String(userId));
     res.json({ isFavorite });
   } catch (error) {
-    console.error('Error checking favorite:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
@@ -35,7 +34,6 @@ export async function toggleFavoriteController(req: Request, res: Response) {
     const result = await toggleFavorite(Number(movieId), String(userId));
     res.json({ isFavorite: result.isInFavorites });
   } catch (error) {
-    console.error('Error toggling favorite:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
@@ -53,7 +51,6 @@ export async function getFavorites(req: Request, res: Response) {
     const favorites = await getUserFavorites(String(userId));
     res.json(favorites);
   } catch (error) {
-    console.error('Error getting favorites:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

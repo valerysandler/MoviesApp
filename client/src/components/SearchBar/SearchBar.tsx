@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './SearchBar.module.scss';
-import { FaSearch, FaTimes } from 'react-icons/fa'; // ← добавили FaTimes
+import { FaSearch, FaTimes } from 'react-icons/fa';
 
 interface SearchBarProps {
   onSearch: (searchTerm: string) => void;
@@ -47,6 +47,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onClear }) => {
           {...register('title', {
             required: 'Title is required',
             minLength: { value: 3, message: 'Minimum 3 characters' },
+            maxLength: { value: 100, message: 'Maximum 100 characters' },
+            pattern: {
+              value: /^[a-zA-Z0-9\s]+$/,
+              message: 'Only alphanumeric characters and spaces are allowed',
+            },
           })}
           className={styles.input}
         />
