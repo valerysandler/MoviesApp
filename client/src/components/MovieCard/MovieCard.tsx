@@ -43,7 +43,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
         handleModalClose
     } = useAuthAction();
 
-    const { showSuccess, showError } = useNotification();
+    const { showError } = useNotification();
 
     const handleMovieClick = () => {
         if (isFromDatabase && movie.id) {

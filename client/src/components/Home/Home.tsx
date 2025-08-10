@@ -65,7 +65,7 @@ const Home = () => {
         const existingMovies = new Set<string>();
         console.log('Current user for checking movies:', user?.username);
         await Promise.all(
-          results.map(async (movie) => {
+          results.map(async (movie: Movie) => {
             try {
               console.log(`Checking movie: ${movie.title} for user: ${user?.username}`);
               const exists = await checkMovieExists(movie.title, user?.username);
