@@ -1,9 +1,6 @@
 import { toast } from 'react-toastify';
 import type { ToastOptions } from 'react-toastify';
 
-/**
- * Custom hook for displaying notifications
- */
 export const useNotification = () => {
     const defaultOptions: ToastOptions = {
         position: "top-right",

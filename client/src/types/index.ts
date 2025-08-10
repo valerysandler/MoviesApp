@@ -1,6 +1,3 @@
-/**
- * Core domain types and interfaces
- */
 
 export interface Movie {
     id: number;

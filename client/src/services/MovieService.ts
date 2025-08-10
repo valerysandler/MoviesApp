@@ -1,7 +1,3 @@
-/**
- * Simplified Movie Service - functions instead of class
- */
-
 import axios from 'axios';
 import { API_CONFIG } from '../config/constants';
 import type { Movie, MovieFormData } from '../types';

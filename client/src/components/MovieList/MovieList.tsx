@@ -5,7 +5,7 @@ import UsernameModal from '../UsernamModal/UsernameModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import type { Movie } from '../../types';
 import { useAppDispatch } from '../../store/hooks';
-import { toggleFavorite } from '../../store/moviesSlice';
+import { toggleFavorite, deleteMovie } from '../../store/moviesSlice';
 
 interface MovieListProps {
   movies: Movie[];

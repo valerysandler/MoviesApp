@@ -1,6 +1,3 @@
-/**
- * Простые правила валидации для форм
- */
 
 export const movieValidationRules = {
     title: {
