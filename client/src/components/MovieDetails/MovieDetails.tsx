@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from './MovieDetails.module.scss';
 import type { Movie } from '../../types';
 import { getPosterUrl } from '../../utils/imageUtils';
-import { fetchMovies, toggleFavorite, deleteMovie } from '../../services/movieService.js';
+import { fetchMovies, toggleFavorite, deleteMovie } from '../../services/movieService';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import EditMovieModal from '../EditMovieModal/EditMovieModal';

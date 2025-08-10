@@ -8,7 +8,7 @@ import UsernameModal from '../UsernamModal/UsernameModal';
 import DeleteConfirmModal from '../DeleteConfirmModal/DeleteConfirmModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
 import { useNotification } from '../../hooks/useNotification';
-import { deleteMovie } from '../../services/movieService.js';
+import { deleteMovie } from '../../services/movieService';
 
 interface MovieCardProps {
     movie: Movie;

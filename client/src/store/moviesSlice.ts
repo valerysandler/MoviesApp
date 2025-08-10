@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { Movie } from '../types';
-import { fetchMovies as fetchMoviesAPI, toggleFavorite as toggleFavoriteAPI, addMovieToDatabase as addMovieAPI, deleteMovie as deleteMovieAPI } from '../services/movieService.js';
+import { fetchMovies as fetchMoviesAPI, toggleFavorite as toggleFavoriteAPI, addMovieToDatabase as addMovieAPI, deleteMovie as deleteMovieAPI } from '../services/movieService';
 
 export interface MoviesState {
     movies: Movie[];
