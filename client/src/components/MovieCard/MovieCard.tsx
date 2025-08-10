@@ -7,6 +7,7 @@ import EditMovieModal from '../EditMovieModal/EditMovieModal';
 import UsernameModal from '../UsernamModal/UsernameModal';
 import DeleteConfirmModal from '../DeleteConfirmModal/DeleteConfirmModal';
 import { useAuthAction } from '../../hooks/useAuthAction';
+import { useNotification } from '../../hooks/useNotification';
 import { deleteMovie } from '../../services/movieService';
 
 interface MovieCardProps {
@@ -17,6 +18,7 @@ interface MovieCardProps {
     onAddToDatabase?: (movie: Movie) => void;
     isFromDatabase?: boolean;
     isMovieAdded?: boolean;
+    isAddingToDatabase?: boolean;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -26,7 +28,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
     onMovieDeleted,
     onAddToDatabase,
     isFromDatabase = true,
-    isMovieAdded = false
+    isMovieAdded = false,
+    isAddingToDatabase = false
 }) => {
     const navigate = useNavigate();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -40,6 +43,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
         handleModalClose
     } = useAuthAction();
 
+    const { showSuccess, showError } = useNotification();
+
     const handleMovieClick = () => {
         if (isFromDatabase && movie.id) {
             navigate(`/movie/${movie.id}`);
@@ -48,9 +53,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
     const handleFavoriteClick = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (isFromDatabase) {
-            onFavoriteClick(movie);
-        }
+        event.preventDefault();
+        
+        if (!isFromDatabase) return;
+        
+        onFavoriteClick(movie);
     };
 
     const handleEditClick = (event: React.MouseEvent) => {
@@ -89,7 +96,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 onMovieDeleted(movie.id);
             }
         } catch (error) {
-            alert('Failed to delete movie. Please try again.');
+            showError('Failed to delete movie. Please try again.');
         } finally {
             setIsDeleting(false);
         }
@@ -101,11 +108,13 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
     const handleAddToDatabase = (event: React.MouseEvent) => {
         event.stopPropagation();
-        if (onAddToDatabase) {
-            executeWithAuth(() => {
-                onAddToDatabase(movie);
-            });
-        }
+        event.preventDefault();
+        
+        if (isMovieAdded || !onAddToDatabase) return;
+        
+        executeWithAuth(() => {
+            onAddToDatabase(movie);
+        });
     };
 
     return (
@@ -142,12 +151,16 @@ const MovieCard: React.FC<MovieCardProps> = ({
                     <div className={styles.actions}>
                         <button
                             className={`${styles.actionButton} ${isMovieAdded ? styles.addedButton : styles.addButton}`}
-                            onClick={isMovieAdded ? undefined : handleAddToDatabase}
-                            aria-label={isMovieAdded ? "Already added" : "Add to database"}
-                            title={isMovieAdded ? "Already in your collection" : "Add to my movies"}
-                            disabled={isMovieAdded}
+                            onClick={handleAddToDatabase}
+                            aria-label={isMovieAdded ? "Already added" : isAddingToDatabase ? "Adding..." : "Add to database"}
+                            title={isMovieAdded ? "Already in your collection" : isAddingToDatabase ? "Adding to collection..." : "Add to my movies"}
+                            disabled={isMovieAdded || isAddingToDatabase}
+                            style={{ 
+                                pointerEvents: (isMovieAdded || isAddingToDatabase) ? 'none' : 'auto',
+                                opacity: isAddingToDatabase ? 0.7 : 1
+                            }}
                         >
-                            {isMovieAdded ? '✓' : '＋'}
+                            {isMovieAdded ? '✓' : isAddingToDatabase ? '⏳' : '＋'}
                         </button>
                     </div>
                 )}

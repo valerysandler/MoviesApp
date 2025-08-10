@@ -24,6 +24,7 @@
 .actionButton {
   background-color: rgba(0, 0, 0, 0.7);
   border: none;
+  outline: none;
   padding: 0.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease, transform 0.2s ease;
@@ -45,6 +46,15 @@
   transform: scale(1.1);
 }
 
+.actionButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+}
+
 .actionButton:first-child {
   color: gold;
 }
@@ -59,6 +69,7 @@
   color: white !important;
   font-size: 1.2rem !important;
   font-weight: bold;
+  outline: none !important;
 }
 
 .addButton:hover {
@@ -67,12 +78,22 @@
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.5) !important;
 }
 
+.addButton:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5) !important;
+}
+
+.addButton:active {
+  transform: scale(0.95) !important;
+}
+
 .addedButton {
   background-color: rgba(33, 150, 243, 0.7) !important;
   color: white !important;
   font-size: 1.2rem !important;
   font-weight: bold;
   cursor: default !important;
+  outline: none !important;
 }
 
 .addedButton:hover {
@@ -80,6 +101,11 @@
   color: white !important;
   box-shadow: 0 0 8px rgba(33, 150, 243, 0.5) !important;
   transform: none !important;
+}
+
+.addedButton:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5) !important;
 }
 
 .favoriteButton {

@@ -18,6 +18,7 @@ const Home = () => {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [currentSearchQuery, setCurrentSearchQuery] = useState('');
   const [addedMovieTitles, setAddedMovieTitles] = useState<Set<string>>(new Set());
+  const [addingMovieId, setAddingMovieId] = useState<string | null>(null);
 
   const {
     executeWithAuth,
@@ -119,21 +120,59 @@ const Home = () => {
       return;
     }
 
+    setAddingMovieId(movie.title);
+
     try {
+      // Immediately update UI for better UX
+      setAddedMovieTitles(prev => new Set([...prev, movie.title]));
+      
       const { id, ...movieData } = movie;
       await addMovieToDatabase(movieData, user.id.toString());
       showSuccess(`🎬 "${movie.title}" added to your collection!`);
 
-      setAddedMovieTitles(prev => new Set([...prev, movie.title]));
-
-      await refreshMovies();
+      // Refresh movies in background
+      refreshMovies();
     } catch (error) {
+      // Revert UI change if failed
+      setAddedMovieTitles(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(movie.title);
+        return newSet;
+      });
       showError('Failed to add movie. Please try again.');
+    } finally {
+      setAddingMovieId(null);
     }
   };
 
   const isMovieAdded = (movieTitle: string) => {
     return addedMovieTitles.has(movieTitle);
+  };
+
+  const isAddingMovie = (movieTitle: string) => {
+    return addingMovieId === movieTitle;
+  };
+
+  const handleEditMovie = (updatedMovie: Movie) => {
+    showSuccess(`✏️ "${updatedMovie.title}" updated successfully!`);
+    refreshMovies();
+  };
+
+  const handleDeleteMovie = (movieId: number) => {
+    const deletedMovie = filteredMovies.find(m => m.id === movieId);
+    if (deletedMovie) {
+      showSuccess(`🗑️ "${deletedMovie.title}" deleted successfully!`);
+    }
+    refreshMovies();
+  };
+
+  const handleAddToFavorites = (movie: Movie, isFavorite: boolean) => {
+    if (isFavorite) {
+      showSuccess(`⭐ "${movie.title}" added to favorites!`);
+    } else {
+      showSuccess(`☆ "${movie.title}" removed from favorites!`);
+    }
+    // Don't refresh movies - Redux already updated the state
   };
 
   return (
@@ -179,10 +218,12 @@ const Home = () => {
         <MovieList
           movies={filteredMovies}
           isFromDatabase={!isSearching}
-          onMovieUpdated={refreshMovies}
-          onMovieDeleted={refreshMovies}
+          onMovieUpdated={handleEditMovie}
+          onMovieDeleted={handleDeleteMovie}
           onAddToDatabase={handleAddToDatabase}
+          onAddToFavorites={handleAddToFavorites}
           isMovieAdded={isMovieAdded}
+          isAddingToDatabase={isAddingMovie}
         />
       )}
     </div>

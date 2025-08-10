@@ -5,6 +5,7 @@ import type { Movie } from "../../types";
 import { getPosterUrl } from "../../utils/imageUtils";
 import { updateMovie, updateMovieWithImage } from "../../services/movieService";
 import { movieValidationRules } from "../../utils/formValidation";
+import { useNotification } from "../../hooks/useNotification";
 
 type EditMovieModalProps = {
     isOpen: boolean;
@@ -18,6 +19,8 @@ const EditMovieModal: React.FC<EditMovieModalProps> = ({ isOpen, movie, onClose,
     const [customError, setCustomError] = useState<string | null>(null);
     const [posterFile, setPosterFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const { showSuccess, showError } = useNotification();
 
     const {
         register,
@@ -81,10 +84,13 @@ const EditMovieModal: React.FC<EditMovieModalProps> = ({ isOpen, movie, onClose,
             }
 
             onSubmit(updatedMovie);
+            showSuccess(`✏️ "${updatedMovie.title}" updated successfully!`);
             handleClose();
         } catch (error) {
             console.error('Error updating movie:', error);
-            setCustomError("Failed to update movie. Please try again.");
+            const errorMessage = "Failed to update movie. Please try again.";
+            setCustomError(errorMessage);
+            showError(errorMessage);
         } finally {
             setIsLoading(false);
         }
