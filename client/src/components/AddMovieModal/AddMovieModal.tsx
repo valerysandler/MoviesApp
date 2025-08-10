@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "./AddMovieModal.module.scss";
 import type { Movie } from "../../types";
-import { checkMovieExists, addMovieWithImage } from "../../services/movieService";
 import { useAppDispatch } from "../../store/hooks";
 import { fetchMovies } from "../../store/moviesSlice";
 import { useUser } from "../../hooks/useUser";
 import { useNotification } from "../../hooks/useNotification";
 import { movieValidationRules } from "../../utils/formValidation";
+import { addMovieWithImage, checkMovieExists } from "../../services/movieService";
 
 type AddMovieModalProps = {
   isOpen: boolean;

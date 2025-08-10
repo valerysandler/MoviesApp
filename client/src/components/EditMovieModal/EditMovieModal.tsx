@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import styles from "./EditMovieModal.module.scss";
 import type { Movie } from "../../types";
 import { getPosterUrl } from "../../utils/imageUtils";
-import { updateMovie, updateMovieWithImage } from "../../services/movieService";
 import { movieValidationRules } from "../../utils/formValidation";
 import { useNotification } from "../../hooks/useNotification";
+import { updateMovie, updateMovieWithImage } from "../../services/movieService";
 
 type EditMovieModalProps = {
     isOpen: boolean;

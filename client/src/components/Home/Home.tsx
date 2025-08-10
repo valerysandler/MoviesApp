@@ -8,8 +8,8 @@ import MovieList from '../MovieList/MovieList';
 import AddMovieModal from "../AddMovieModal/AddMovieModal";
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { fetchMovies, setSearchResults, clearSearch } from '../../store/moviesSlice';
-import { searchMovies, addMovieToDatabase, checkMovieExists } from '../../services/movieService';
 import { useNotification } from '../../hooks/useNotification';
+import { addMovieToDatabase, checkMovieExists, searchMovies } from '../../services/movieService';
 
 const Home = () => {
   const dispatch = useAppDispatch();
