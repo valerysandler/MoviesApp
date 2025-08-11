@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Home from './components/Home/Home';
 import MovieDetails from './components/MovieDetails/MovieDetails';
 import Navbar from './components/Navbar/Navbar';
+import StatisticsPage from './components/StatisticsPage/StatisticsPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/movie/:id" element={<MovieDetails />} />
+          <Route path='/statistics' element={<StatisticsPage />} />
         </Routes>
 
         {/* Toast Container для уведомлений */}

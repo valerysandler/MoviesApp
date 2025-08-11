@@ -10,12 +10,18 @@ const Navbar: React.FC = () => {
     const dispatch = useAppDispatch();
     const { showInfo } = useNotification();
     const isHome = location.pathname === '/';
+    const isStatistics = location.pathname === '/statistics';
 
     const handleHomeClick = () => {
         // Clear search when clicking Home
         dispatch(clearSearch());
         showInfo('🏠 Returned to home page');
     };
+
+    const handleStatisticsClick = () => {
+        dispatch(clearSearch());
+        showInfo('📊 Viewing statistics');
+    }
 
     return (
         <nav className={styles.navbar}>
@@ -37,6 +43,15 @@ const Navbar: React.FC = () => {
                         onClick={handleHomeClick}
                     >
                         🏠 Home
+                    </Link>
+                          <Link
+                        to="/statistics"
+                        aria-label="Statistics"
+                        title="Statistics"
+                        className={`${styles.navLink} ${isStatistics ? styles.active : ''}`}
+                        onClick={handleStatisticsClick}
+                    >
+                        Statistics
                     </Link>
                 </div>
             </div>

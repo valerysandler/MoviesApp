@@ -50,7 +50,7 @@ export async function addMovieToDatabase(movie: Omit<Movie, 'id'>): Promise<Movi
             movie.year,
             movie.runtime,
             movie.poster,
-            movie.poster_local,  // новое поле
+            movie.poster_local, 
             movie.genre,
             movie.director,
             movie.external_id,

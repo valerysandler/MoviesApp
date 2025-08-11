@@ -12,12 +12,12 @@ console.log('NODE_ENV:', import.meta.env.MODE);
 const getApiUrl = () => {
     const viteUrl = import.meta.env.VITE_API_URL;
     const reactUrl = import.meta.env.REACT_APP_API_URL;
-    const defaultUrl = 'http://localhost:5000';
+    const defaultUrl = 'http://localhost:3000';
 
     // If we're in production mode, force the production URL
-    if (import.meta.env.MODE === 'production') {
-        return viteUrl || reactUrl || 'https://moviesapp-3.onrender.com';
-    }
+    // if (import.meta.env.MODE === 'production') {
+    //     return viteUrl || reactUrl || 'https://moviesapp-3.onrender.com';
+    // }
 
     return viteUrl || reactUrl || defaultUrl;
 };
